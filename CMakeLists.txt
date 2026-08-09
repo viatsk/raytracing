@@ -67,4 +67,4 @@ add_executable(rt4             ${UTILS} src/stacy/ray-tracing4.cc)
 add_executable(rt4dbg             ${UTILS} src/stacy/ray-tracing4-debug.cc)
 
 add_executable(rt5 ${UTILS} src/stacy/ray-tracing5.cc)
-
+add_executable(rt5dbg ${UTILS} src/stacy/ray-tracing5-debug.cc)
