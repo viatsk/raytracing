@@ -10,7 +10,7 @@ Here is the current state of my spheres:
 
 Implementation
 ------------------
-I am reading and following the [textbook] out-of-order. 
+I am reading and following the [textbook] out-of-order. Here are my plans for what to tackle next:
 
 * [ ] Factor out the camera implementation to debug the warped effect
 * [ ] Understand why the colours are different between the two camera approaches

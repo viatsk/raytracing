@@ -60,11 +60,12 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Executables
-add_executable(rt1               src/stacy/ray-tracing1.cc)
+add_executable(rt1             src/stacy/ray-tracing1.cc)
 add_executable(rt2             ${SOURCE_RT2})
 add_executable(rt3             ${UTILS} src/stacy/ray-tracing3.cc)
 add_executable(rt4             ${UTILS} src/stacy/ray-tracing4.cc)
-add_executable(rt4dbg             ${UTILS} src/stacy/ray-tracing4-debug.cc)
+add_executable(rt4dbg          ${UTILS} src/stacy/ray-tracing4-debug.cc)
 
-add_executable(rt5 ${UTILS} src/stacy/ray-tracing5.cc)
-add_executable(rt5dbg ${UTILS} src/stacy/ray-tracing5-debug.cc)
+# Let's get serious
+add_executable(rt5             ${UTILS} src/stacy/ray-tracing5.cc)
+add_executable(rt5dbg          ${UTILS} src/stacy/ray-tracing5-debug.cc)
