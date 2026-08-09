@@ -9,7 +9,7 @@ cmake_minimum_required ( VERSION 3.1.0...4.0.0 )
 project ( RTWeekend LANGUAGES CXX )
 
 # Set to C++17
-set ( CMAKE_CXX_STANDARD          17 )
+set ( CMAKE_CXX_STANDARD          20 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
@@ -26,6 +26,7 @@ set ( UTILS
   src/stacy/hittable.h
   src/stacy/ray.h
   src/stacy/vec3.h
+  src/stacy/sphere.h
 )
 
 
@@ -64,3 +65,6 @@ add_executable(rt2             ${SOURCE_RT2})
 add_executable(rt3             ${UTILS} src/stacy/ray-tracing3.cc)
 add_executable(rt4             ${UTILS} src/stacy/ray-tracing4.cc)
 add_executable(rt4dbg             ${UTILS} src/stacy/ray-tracing4-debug.cc)
+
+add_executable(rt5 ${UTILS} src/stacy/ray-tracing5.cc)
+

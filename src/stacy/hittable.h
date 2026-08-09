@@ -1,6 +1,8 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include <optional>
+
 #include "ray.h"
 
 
@@ -12,8 +14,8 @@ struct hit_record {
 
 class hittable {
  public:
-  virtual ~hittable() = default; // why? 
-  virtual bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const = 0;
+  virtual ~hittable() = default; // needs to be virtual for correct destruction
+  virtual std::optional<hit_record> hit(const ray& r, double closest_so_far) const = 0;
 };
 
 #endif
