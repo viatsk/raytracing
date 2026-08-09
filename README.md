@@ -1,4 +1,4 @@
-Ray Tracing in One Weekend Implementation
+Ray Tracing in One Weekend
 ====================================================================================================
 
 This is my raytracer implementation based on the "Ray Tracing In One Weekend" series.
