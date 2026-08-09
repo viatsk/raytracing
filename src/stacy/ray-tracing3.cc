@@ -28,20 +28,6 @@ colour ray_colour(const ray& r) {
     return 0.5 * (normalized_colour + white ) + red;
   }
 
-  vec3 green_sphere_centre = point3(-1, 0, -1);
-  t = hit_sphere(green_sphere_centre, 0.5, r);
-  if (t > 0.0){
-    vec3 normalized_colour = unit_vector(r.at(t) - green_sphere_centre);
-    return 0.5 * (normalized_colour + white) + green;
-  }
-
-  vec3 blue_sphere_centre = point3(1, 0, -1);
-  t = hit_sphere(blue_sphere_centre, 0.5, r);
-  if (t > 0.0){
-    vec3 normalized_colour = unit_vector(r.at(t) - blue_sphere_centre);
-    return 0.5 * (normalized_colour + white) + blue;
-  }
-
   // When a = 1, blue. When a = 0, white. 
   double a = 0.5 * (unit_direction.y() + 1.0);
   vec3 white_part = (1.0-a)*colour(1.0, 1.0, 1.0);
