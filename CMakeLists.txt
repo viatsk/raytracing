@@ -29,6 +29,10 @@ set ( UTILS
   src/stacy/sphere.h
 )
 
+set ( PROJ_MATRIX_CAMERA
+  src/stacy/camera.h
+)
+
 
 include_directories(src)
 
@@ -69,3 +73,5 @@ add_executable(rt4dbg          ${UTILS} src/stacy/ray-tracing4-debug.cc)
 # Let's get serious
 add_executable(rt5             ${UTILS} src/stacy/ray-tracing5.cc)
 add_executable(rt5dbg          ${UTILS} src/stacy/ray-tracing5-debug.cc)
+
+add_executable(rt6             ${UTILS} ${PROJ_MATRIX_CAMERA} src/stacy/ray-tracing6.cc)

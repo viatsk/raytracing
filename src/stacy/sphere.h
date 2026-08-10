@@ -9,7 +9,7 @@
 
 class sphere : public hittable {
  public:
-  sphere(const point3& centre, double radius) : centre_(centre), radius_(radius) {}
+  sphere(const point3& centre, double radius, colour colour) : centre_(centre), radius_(radius), colour_(colour){}
 
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const override {
     vec3 sphere_centre = centre_ - r.origin();
@@ -33,12 +33,14 @@ class sphere : public hittable {
     hit.t = root; // value of t for which ray is hit
     hit.p = r.at(root); // value of the traced ray at the root
     hit.normal = (r.at(root) - centre_) / radius_;
+    hit.sphere_colour = colour_; // TODO this is not a good way to shade the sphere
     return hit;
   }
 
  private:
   point3 centre_;
   double radius_;
+  colour colour_;
 };
 
 #endif

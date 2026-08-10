@@ -10,6 +10,7 @@ struct hit_record {
   point3 p;
   vec3 normal;
   double t;
+  colour sphere_colour;
 };
 
 class hittable {
