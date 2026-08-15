@@ -13,7 +13,7 @@ Implementation
 I am reading and following the [textbook] out-of-order. Here are my plans for what to tackle next:
 
 * [x] Factor out the camera implementation to debug the warped effect
-  * see [rt5] and [rt5fbg]
+  * see [rt5] and [rt5dbg]
 * [ ] Understand why the colours are different between the two camera approaches
 * [ ] Add a light source and shade accordingly
 * [ ] Add different sphere materials
