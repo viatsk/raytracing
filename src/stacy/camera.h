@@ -14,7 +14,7 @@ inline double degrees_to_radians(double degrees) {
 
 class camera {
  public:
-  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1380 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
+  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
     img_height_ = int(img_width / aspect_ratio);
 
     auto focal_length = (camera_centre_ - lookat).length();
@@ -60,8 +60,6 @@ class camera {
   vec3   vup      = vec3(0,1,0);     // Camera-relative "up" direction TODO understand better
 
  private:
-  void initialize() {
-  }
 
   vec3 stacy_lerp(vec3 start_value, vec3 end_value, float a) {
     return (1.0-a)*start_value + a*end_value;
@@ -83,17 +81,20 @@ class camera {
     return stacy_lerp(blue, white, a);
   }
 
+  // Camera setup
+  point3 camera_centre_;
+  double vfov_; // Vertical field of view
+
   // Image dimensions
   double aspect_ratio_;
   int img_width_;
-  int img_height_;
+  int img_height_; // derived from width
 
-  point3 camera_centre_;
-  double vfov_; // Vertical field of view
+  // Viewport setup
   vec3 pixel00_loc;
   vec3 pixel_delta_u;
   vec3 pixel_delta_v;
-  vec3 u, v, w;              // Camera frame basis vectors
+  vec3 u, v, w;  // Camera frame basis vectors
 };
 
 #endif
