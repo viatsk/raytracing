@@ -14,16 +14,16 @@ inline double degrees_to_radians(double degrees) {
 
 class camera {
  public:
-  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1380 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
+  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
     img_height_ = int(img_width / aspect_ratio);
 
-    auto focal_length = (camera_centre_ - lookat).length();
+    auto focal_length = (camera_centre_ - scene_centre).length();
     auto theta = degrees_to_radians(vfov_);
     auto h = std::tan(theta/2);
     auto viewport_height = 2 * h * focal_length;
     auto viewport_width = viewport_height * (double(img_width)/img_height_);
 
-    w = unit_vector(camera_centre_ - lookat);
+    w = unit_vector(camera_centre_ - scene_centre);
     u = unit_vector(cross(vup, w));
     v = cross(w, u);
 
@@ -56,12 +56,11 @@ class camera {
     std::clog << "\r Done! \n";
   }
 
-  point3 lookat   = point3(0,0,-1);  // Point camera is looking at
-  vec3   vup      = vec3(0,1,0);     // Camera-relative "up" direction TODO understand better
+  // TODO: Implement camera pan
+  point3 scene_centre   = point3(0,0,-1);  // Point camera is looking at.
+  vec3   vup      = vec3(0,1,0);     // Camera-relative "up" direction.
 
  private:
-  void initialize() {
-  }
 
   vec3 stacy_lerp(vec3 start_value, vec3 end_value, float a) {
     return (1.0-a)*start_value + a*end_value;
@@ -83,17 +82,20 @@ class camera {
     return stacy_lerp(blue, white, a);
   }
 
+  // Camera setup
+  point3 camera_centre_;
+  double vfov_; // Vertical field of view
+
   // Image dimensions
   double aspect_ratio_;
   int img_width_;
-  int img_height_;
+  int img_height_; // derived from width
 
-  point3 camera_centre_;
-  double vfov_; // Vertical field of view
+  // Viewport setup
   vec3 pixel00_loc;
   vec3 pixel_delta_u;
   vec3 pixel_delta_v;
-  vec3 u, v, w;              // Camera frame basis vectors
+  vec3 u, v, w;  // Camera frame basis vectors
 };
 
 #endif
