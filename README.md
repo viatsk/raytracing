@@ -4,6 +4,12 @@ Ray Tracing in One Weekend
 This is my raytracer implementation based on the "Ray Tracing In One Weekend" series.
 Here is the current state of my spheres:
 
+| ![foo][out7_greys2] |
+|:---------------------------:|
+
+And here are some arbitrary camera angles I was proud of that don't currently work with my diffuse lighting conditions: 
+
+
 | ![foo][out6_far] | ![RT The Next Week][out6_near] | ![foo][out6_side] | ![RT The Next Week][out6_top_left] |
 |:----------------------------:|:---------------------------:|:----------------------------:|:---------------------------:|
 |   Spheres far    |  Spheres near | spheres from the side | spheres from the top | 
@@ -15,7 +21,7 @@ I am reading and following the [textbook] out-of-order. Here are my plans for wh
 * [x] Factor out the camera implementation to debug the warped effect
   * see [rt5] and [rt5dbg]
 * [ ] Understand why the colours are different between the two camera approaches
-* [ ] Add a light source and shade accordingly
+* [ ] **WIP**: Add a light source and shade accordingly
 * [ ] Add different sphere materials
 * [ ] Anti-aliasing (I have no idea what this is)
 * [ ] Cube?
@@ -30,6 +36,7 @@ The files in `src/stacy` act as "checkpoints" along the journey to render 1001 s
 - [rt4] simplifies the sphere equation and draws 3 spheres, which are warped (zoom out makes this obvious). [rt4dbg] attempts to deal with the warping problem by diverging from the book in terms of camera setup.
 - [rt5] introduces the concept of the "world" with objects in the world, checks hit intersections and returns the nearest one. [rt5dbg] diverges in terms of camera setup.
 - [rt6] factors out the camera and applies vertial-field-of-view transforms
+- [rt7] tries to introduce diffuse lighting and shadow interactions between the spheres, currently breaking camera.
 
 The spheres will be improving.
 
@@ -42,6 +49,7 @@ The spheres will be improving.
 [out6_far]:        out/rt6_far.png
 [out6_side]:       out/rt6_side.png
 [out6_top_left]:   out/rt6_top_left.png
+[out7_greys2]:     out/rt7_greys2.png
 [rt1]:             src/stacy/ray-tracing1.cc
 [rt2]:             src/stacy/ray-tracing2.cc
 [rt3]:             src/stacy/ray-tracing3.cc
@@ -50,4 +58,5 @@ The spheres will be improving.
 [rt5]:             src/stacy/ray-tracing5.cc
 [rt5dbg]:          src/stacy/ray-tracing5-debug.cc
 [rt6]:             src/stacy/ray-tracing6.cc
+[rt7]:             src/stacy/ray-tracing7.cc
 [textbook]:        https://raytracing.github.io/books/RayTracingInOneWeekend.html
