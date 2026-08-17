@@ -3,6 +3,7 @@
 
 #include <cmath> 
 #include <iostream>
+#include <random>
 
 class vec3 {
  public:
@@ -102,5 +103,53 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
 }
+
+// TODO: Move this function somewhere else
+inline double random_double() {
+    std::random_device rd;
+    std::mt19937 generate(rd());
+
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(generate);
+}
+
+inline static vec3 random_vec3() {
+  return vec3(random_double(), random_double(), random_double());
+}
+
+// TODO this sucks and I hate it.
+inline vec3 random_unit_vector() {
+    while (true) {
+        vec3 p = random_vec3();
+        auto lensq = p.length_squared();
+        if (1e-160 < lensq && lensq <= 1)
+            return p / sqrt(lensq);
+    }
+}
+
+// TODO: Confirm this works.
+// inline vec3 random_unit_vector_civilized() {
+//   vec3 unit_vector;
+//   for (int j = 0; j < 3; j++) {
+//     unit_vector.e[j] = random_double();
+//   }
+//   double normal = unit_vector.length();
+//   for (int j = 0; j < 3; j++) {
+//     unit_vector.e[j] = unit_vector.e[j] / normal;
+//   }
+//   return unit_vector;
+// }
+
+inline vec3 random_on_hemisphere(const vec3& normal) {
+  vec3 random_unit_vec = random_unit_vector();
+  // TODO make nicer... possibly check if normal is negative first.
+  if (dot(random_unit_vec, normal) > 0.0) {
+    return random_unit_vec;
+  }
+  else {
+    return -random_unit_vec;
+  }
+}
+
 
 #endif

@@ -56,6 +56,10 @@ class camera {
     std::clog << "\r Done! \n";
   }
 
+  void set_using_shading(bool is_using_shading){
+    using_shading_ = is_using_shading;
+  }
+
   // TODO: Implement camera pan
   point3 scene_centre   = point3(0,0,-1);  // Point camera is looking at.
   vec3   vup      = vec3(0,1,0);     // Camera-relative "up" direction.
@@ -70,8 +74,13 @@ class camera {
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
     if (record.has_value()) {
       // TODO: This is a bad way to not shade one of the spheres.
-      if (record.value().sphere_colour == colour(0.565, 0.933, 0.565))
+      if (record.value().sphere_colour == colour(0.565, 0.933, 0.565) && !using_shading_)
         return colour(0.565, 0.933, 0.565);
+      
+      if (using_shading_) {
+        vec3 direction = random_on_hemisphere(record.value().normal);
+        return 0.5 * ray_colour(ray(record.value().p, direction), world);
+      }
       return 0.5 * (record.value().normal + white) + record.value().sphere_colour;
     }
 
@@ -96,6 +105,9 @@ class camera {
   vec3 pixel_delta_u;
   vec3 pixel_delta_v;
   vec3 u, v, w;  // Camera frame basis vectors
+
+  // Feature flags. TODO: Remove.
+  bool using_shading_ = false;
 };
 
 #endif

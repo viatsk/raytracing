@@ -75,3 +75,4 @@ add_executable(rt5             ${UTILS} src/stacy/ray-tracing5.cc)
 add_executable(rt5dbg          ${UTILS} src/stacy/ray-tracing5-debug.cc)
 
 add_executable(rt6             ${UTILS} ${PROJ_MATRIX_CAMERA} src/stacy/ray-tracing6.cc)
+add_executable(rt7             ${UTILS} ${PROJ_MATRIX_CAMERA} src/stacy/ray-tracing7.cc)
