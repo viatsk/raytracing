@@ -20,10 +20,13 @@ I am reading and following the [textbook] out-of-order. Here are my plans for wh
 
 * [x] Factor out the camera implementation to debug the warped effect
   * see [rt5] and [rt5dbg]
-* [ ] Understand why the colours are different between the two camera approaches
+* [x] _sort of complete_ Understand why the colours are different between the two camera approaches
 * [ ] **WIP**: Add a light source and shade accordingly
+* [ ] Move away from virtual dispatch
+* [ ] Understand stratified sampling (?)
+* [ ] Benchmark different ways of randomly generating unit spheres 
 * [ ] Add different sphere materials
-* [ ] Anti-aliasing (I have no idea what this is)
+* [ ] Anti-aliasing
 * [ ] Cube?
 * [ ] Parallel Rust implementation?
 
