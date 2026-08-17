@@ -95,17 +95,11 @@ class camera {
   point3 camera_centre_;
   double vfov_; // Vertical field of view
 
-  // Camera setup
-  point3 camera_centre_;
-  double vfov_; // Vertical field of view
-
   // Image dimensions
   double aspect_ratio_;
   int img_width_;
   int img_height_; // derived from width
-  int img_height_; // derived from width
 
-  // Viewport setup
   // Viewport setup
   vec3 pixel00_loc;
   vec3 pixel_delta_u;
