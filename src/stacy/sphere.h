@@ -6,6 +6,16 @@
 #include "hittable.h"
 #include "vec3.h"
 
+// This should be used to set the hit record normal vector
+// If the dot product of the ray and outward normal is positive,
+// then we are inside the sphere. If it's negative we are outside
+// the sphere. We always want to be outside the sphere so return
+// -outward_normal if the ray is inside.
+// This will become relevant for materials later.
+vec3 normal_san(const ray& r, const vec3& outward_normal) {
+    return (dot(r.direction(), outward_normal) < 0) ? outward_normal : -outward_normal;
+}
+
 
 class sphere : public hittable {
  public:
@@ -23,16 +33,17 @@ class sphere : public hittable {
 
     double root = (h - std::sqrt(discriminant)) / a;
     // If the root is negative, find the positive root
-    if (root <= 0 || root >= closest_so_far) {
+    if (root <= 0.001 || root >= closest_so_far) {
       root = (h + std::sqrt(discriminant)) / a;
-      if (root <= 0 || root >= closest_so_far )
+      if (root <= 0.001 || root >= closest_so_far )
         return {};
     }
 
     hit_record hit;
     hit.t = root; // value of t for which ray is hit
     hit.p = r.at(root); // value of the traced ray at the root
-    hit.normal = (r.at(root) - centre_) / radius_;
+    vec3 norm = (r.at(root) - centre_) / radius_;
+    hit.normal = normal_san(r, norm);
     hit.sphere_colour = colour_; // TODO this is not a good way to shade the sphere
     return hit;
   }

@@ -122,7 +122,7 @@ inline vec3 random_unit_vector() {
     while (true) {
         vec3 p = random_vec3();
         auto lensq = p.length_squared();
-        if (1e-160 < lensq && lensq <= 1)
+        if (1e-5 < lensq && lensq <= 1)
             return p / sqrt(lensq);
     }
 }

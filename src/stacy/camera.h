@@ -46,10 +46,12 @@ class camera {
     for (int h = 0; h < img_height_; h++) {
       std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
         for (int w = 0; w < img_width_; w++) {
+          int max_depth = 5;
+          colour pixel_colour = black;
           vec3 pixel_centre = pixel00_loc + (w * pixel_delta_u) + (h * pixel_delta_v);
           vec3 ray_direction = pixel_centre - camera_centre_;
           ray r(camera_centre_, ray_direction); // So all rays come from the camera centre.
-          vec3 pixel_colour = ray_colour(r, world);
+          pixel_colour += ray_colour(r, max_depth, world);
           write_colour(std::cout, pixel_colour);
       }
     }
@@ -70,7 +72,10 @@ class camera {
     return (1.0-a)*start_value + a*end_value;
   }
 
-  colour ray_colour(const ray& r, const world& world) {
+  colour ray_colour(const ray& r, int max_depth, const world& world) {
+    if (!max_depth) {
+      return black;
+    }
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
     if (record.has_value()) {
       // TODO: This is a bad way to not shade one of the spheres.
@@ -79,7 +84,7 @@ class camera {
       
       if (using_shading_) {
         vec3 direction = random_on_hemisphere(record.value().normal);
-        return 0.5 * ray_colour(ray(record.value().p, direction), world);
+        return 0.5 * ray_colour(ray(record.value().p, direction), max_depth - 1, world);
       }
       return 0.5 * (record.value().normal + white) + record.value().sphere_colour;
     }
