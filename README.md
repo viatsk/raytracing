@@ -4,10 +4,10 @@ Ray Tracing in One Weekend
 This is my raytracer implementation based on the "Ray Tracing In One Weekend" series.
 Here is the current state of my spheres:
 
-| ![foo][out7_greys2] | ![foo][out7_three]  |
+| ![foo][out7_FIXED] | ![foo][out7_FIXED3]  |
 |:---------------------------:| :---------------------------:|
 
-And here are some arbitrary camera angles I was proud of that don't currently work with my diffuse lighting attempts: 
+And here are some arbitrary camera angles I was proud of that don't currently look good with my diffuse lighting attempts: 
 
 
 | ![foo][out6_far] | ![RT The Next Week][out6_near] | ![foo][out6_side] | ![RT The Next Week][out6_top_left] |
@@ -52,8 +52,9 @@ The spheres will be improving.
 [out6_far]:        out/rt6_far.png
 [out6_side]:       out/rt6_side.png
 [out6_top_left]:   out/rt6_top_left.png
-[out7_greys2]:     out/rt7_greys2.png
-[out7_three]:      out/rt7_three.png
+[out7_FIXED]:      out/rt7_lotsofpixels_onesphere.png
+[out7_FIXED3]:     out/rt7_lotsofpixels.png
+[out7_side]:       out/rt7_lotsofpixels_side.png
 [rt1]:             src/stacy/ray-tracing1.cc
 [rt2]:             src/stacy/ray-tracing2.cc
 [rt3]:             src/stacy/ray-tracing3.cc
