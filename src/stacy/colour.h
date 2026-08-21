@@ -20,10 +20,20 @@ void write_colour(std::ostream& out, const colour& pixel_colour) {
   auto g = pixel_colour.y();
   auto b = pixel_colour.z();
 
+  auto linear_to_gamma = [](double v) {
+    return (v > 0) ? std::sqrt(v) : 0;
+  };
+
+  auto clamp = [](double x) -> double {
+    if (x < 0.000) return 0.000;
+    if (x > 0.999) return 0.999;
+    return x;
+  };
+
   // Translate [0, 1] components into the byte range [0, 255]
-  int ir = int(255.999 * r);
-  int ig = int(255.999 * g);
-  int ib = int(255.999 * b);
+  int ir = int(255.999 * clamp(linear_to_gamma(r)));
+  int ig = int(255.999 * clamp(linear_to_gamma(g)));
+  int ib = int(255.999 * clamp(linear_to_gamma(b)));
   
   // Write out PPM format
   std::cout << ir << ' ' << ig << ' ' << ib << '\n';

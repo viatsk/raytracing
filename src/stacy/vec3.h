@@ -140,16 +140,10 @@ inline vec3 random_unit_vector() {
 //   return unit_vector;
 // }
 
-inline vec3 random_on_hemisphere(const vec3& normal) {
-  vec3 random_unit_vec = random_unit_vector();
-  // TODO make nicer... possibly check if normal is negative first.
-  if (dot(random_unit_vec, normal) > 0.0) {
-    return random_unit_vec;
-  }
-  else {
-    return -random_unit_vec;
-  }
-}
+// inline vec3 random_on_hemisphere(const vec3& normal) {
+//   vec3 random_unit_vec = random_unit_vector();
+//   return (dot(random_unit_vec, normal) > 0.0) ? random_unit_vec : -random_unit_vec;
+// }
 
 
 #endif
