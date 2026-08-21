@@ -19,7 +19,7 @@ vec3 normal_san(const ray& r, const vec3& outward_normal) {
 
 class sphere : public hittable {
  public:
-  sphere(const point3& centre, double radius, colour colour) : centre_(centre), radius_(radius), colour_(colour){}
+  sphere(const point3& centre, double radius, colour colour = blue, bool dont_shade_override = false) : centre_(centre), radius_(radius), colour_(colour), dont_shade_override_(dont_shade_override){}
 
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const override {
     vec3 sphere_centre = centre_ - r.origin();
@@ -44,7 +44,8 @@ class sphere : public hittable {
     hit.p = r.at(root); // value of the traced ray at the root
     vec3 norm = (r.at(root) - centre_) / radius_;
     hit.normal = normal_san(r, norm);
-    hit.sphere_colour = colour_; // TODO this is not a good way to shade the sphere
+    hit.hit_colour_REMOVEME = colour_; // TODO this is not a good way to shade the sphere
+    hit.dont_shade = dont_shade_override_;
     return hit;
   }
 
@@ -52,6 +53,7 @@ class sphere : public hittable {
   point3 centre_;
   double radius_;
   colour colour_;
+  bool dont_shade_override_;
 };
 
 #endif

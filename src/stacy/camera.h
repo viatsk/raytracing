@@ -78,15 +78,16 @@ class camera {
     }
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
     if (record.has_value()) {
-      // TODO: This is a bad way to not shade one of the spheres.
-      if (record.value().sphere_colour == colour(0.565, 0.933, 0.565) && !using_shading_)
-        return colour(0.565, 0.933, 0.565);
+      if (record.value().dont_shade)
+        return record.value().hit_colour_REMOVEME;
       
       if (using_shading_) {
         vec3 direction = random_on_hemisphere(record.value().normal);
         return 0.5 * ray_colour(ray(record.value().p, direction), max_depth - 1, world);
       }
-      return 0.5 * (record.value().normal + white) + record.value().sphere_colour;
+      
+      // Default: Normal shading with colour tint
+      return 0.5 * (record.value().normal + white) + record.value().hit_colour_REMOVEME;
     }
 
     // Background gradient

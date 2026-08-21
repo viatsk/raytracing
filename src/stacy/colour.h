@@ -11,6 +11,7 @@ using colour = vec3;
 static colour red = colour(1.0, 0.0, 0.0);
 static colour green = colour(0.0, 1.0, 0.0);
 static colour blue = colour(0.0, 0.0, 1.0);
+static colour light_blue = colour(0.5, 0.7, 1.0);
 static colour white = colour(1.0, 1.0, 1.0);
 static colour black = colour(0.0, 0.0, 0.0);
 

@@ -10,7 +10,9 @@ struct hit_record {
   point3 p;
   vec3 normal;
   double t;
-  colour sphere_colour;
+  // TODO: This is not a good way to shade the objects
+  colour hit_colour_REMOVEME;
+  bool dont_shade = false;
 };
 
 class hittable {
