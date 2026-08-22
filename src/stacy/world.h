@@ -3,6 +3,7 @@
 
 // List of hittables.
 #include "sphere.h"
+#include "hit_record.h"
 
 #include <concepts>
 #include <cmath>

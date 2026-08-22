@@ -1,10 +1,13 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include <optional>
-
+#include "hit_record.h"
+#include "material.h"
 #include "ray.h"
 #include "vec3.h"
+
+#include <optional>
+#include <variant>
 
 // This should be used to set the hit record normal vector
 // If the dot product of the ray and outward normal is positive,
@@ -16,20 +19,13 @@ vec3 normal_san(const ray& r, const vec3& outward_normal) {
     return (dot(r.direction(), outward_normal) < 0) ? outward_normal : -outward_normal;
 }
 
-// TODO: hit record will need to move to a common class
-// once there are more types of hittables.
-struct hit_record {
-  point3 p;
-  vec3 normal;
-  double t;
-  // TODO: This is not a good way to shade the objects
-  colour hit_colour_REMOVEME;
-  bool dont_shade = false;
-};
-
 class sphere {
+ using material = std::variant<lambertian>; // TODO: Enforce material contract.
+ 
  public:
-  sphere(const point3& centre, double radius, colour colour = blue, bool dont_shade_override = false) : centre_(centre), radius_(radius), colour_(colour), dont_shade_override_(dont_shade_override){}
+  sphere(const point3& centre, double radius) : centre_(centre), radius_(radius), mat_(lambertian(colour(0.5, 0.5, 0.5))) {}
+  sphere(const point3& centre, double radius, colour colour) : centre_(centre), radius_(radius), mat_(lambertian(colour)) {}
+  sphere(const point3& centre, double radius, material mat) : centre_(centre), radius_(radius), mat_(mat) {}
 
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
     vec3 sphere_centre = centre_ - r.origin();
@@ -54,16 +50,18 @@ class sphere {
     hit.p = r.at(root); // value of the traced ray at the root
     vec3 norm = (r.at(root) - centre_) / radius_;
     hit.normal = normal_san(r, norm);
-    hit.hit_colour_REMOVEME = colour_; // TODO this is not a good way to shade the sphere
-    hit.dont_shade = dont_shade_override_;
+
+    // TODO: We should have a material interface that enforces scatter.
+    auto [atten, scatter] = std::get<lambertian>(mat_).scatter(r, hit);
+    hit.attenuation = atten;
+    hit.scattered = scatter;
     return hit;
   }
 
  private:
   point3 centre_;
   double radius_;
-  colour colour_;
-  bool dont_shade_override_;
+  material mat_; // Default material is grey lambertian
 };
 
 #endif

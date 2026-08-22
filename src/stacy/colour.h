@@ -11,9 +11,13 @@ using colour = vec3;
 static colour red = colour(1.0, 0.0, 0.0);
 static colour green = colour(0.0, 1.0, 0.0);
 static colour blue = colour(0.0, 0.0, 1.0);
-static colour light_blue = colour(0.5, 0.7, 1.0);
 static colour white = colour(1.0, 1.0, 1.0);
 static colour black = colour(0.0, 0.0, 0.0);
+
+// Based on artistic preference
+static colour light_blue = colour(0.5, 0.7, 1.0);
+static colour light_green = colour(0.565, 0.933, 0.565);
+static colour grey = colour(0.5, 0.5, 0.5);
 
 void write_colour(std::ostream& out, const colour& pixel_colour) {
   auto r = pixel_colour.x();

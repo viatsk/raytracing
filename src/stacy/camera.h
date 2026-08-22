@@ -1,20 +1,15 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "common.h"
 #include "colour.h"
 #include "world.h"
 
 #include <optional>
 
-const double pi = 3.1415926535897932385;
-
-inline double degrees_to_radians(double degrees) {
-    return degrees * pi / 180.0;
-}
-
 class camera {
  public:
-  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
+  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = /*1280*/ 3840 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
     img_height_ = int(img_width / aspect_ratio);
 
     auto focal_length = (camera_centre_ - scene_centre).length();
@@ -78,17 +73,14 @@ class camera {
     }
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
     if (record.has_value()) {
-      if (record.value().dont_shade)
-        return record.value().hit_colour_REMOVEME;
       
       if (using_shading_) {
-        // vec3 direction = random_on_hemisphere(record.value().normal);
-        vec3 direction = record.value().normal + random_unit_vector(); // Lambertian reflection? TODO.
-        return 0.5 * ray_colour(ray(record.value().p, direction), max_depth - 1, world);
+        auto rec_value = record.value();
+        return rec_value.attenuation * ray_colour(rec_value.scattered, max_depth-1, world);
       }
       
-      // Default: Normal shading with colour tint
-      return 0.5 * (record.value().normal + white) + record.value().hit_colour_REMOVEME;
+      // Default: Normal shading
+      return 0.5 * (record.value().normal + white);
     }
 
     // Background gradient

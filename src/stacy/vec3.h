@@ -1,9 +1,10 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "common.h"
+
 #include <cmath> 
 #include <iostream>
-#include <random>
 
 class vec3 {
  public:
@@ -48,6 +49,12 @@ class vec3 {
 
   double length_squared() const {
     return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+  }
+
+  bool near_zero() const {
+    // Return true if the vector is close to zero in all dimensions.
+    auto s = 1e-8;
+    return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
   }
 };
 
@@ -102,15 +109,6 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 
 inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
-}
-
-// TODO: Move this function somewhere else
-inline double random_double() {
-    std::random_device rd;
-    std::mt19937 generate(rd());
-
-    std::uniform_real_distribution<double> distribution(-1.0, 1.0);
-    return distribution(generate);
 }
 
 inline static vec3 random_vec3() {

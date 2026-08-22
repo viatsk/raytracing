@@ -22,10 +22,15 @@ set ( SOURCE_RT2
 )
 
 set ( UTILS 
+  src/stacy/common.h
   src/stacy/colour.h
+  src/stacy/hit_record.h
   src/stacy/ray.h
   src/stacy/vec3.h
+  # TODO make a SHAPES set
   src/stacy/sphere.h
+  # TODO make a MATERIALS set
+  src/stacy/material.h
 )
 
 set ( PROJ_MATRIX_CAMERA
