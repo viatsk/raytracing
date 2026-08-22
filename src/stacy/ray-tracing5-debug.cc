@@ -33,10 +33,10 @@ int main() {
   // World
   world world;
   
-  world.add(std::make_unique<sphere>(point3(0, 0, 1.0), 0.1));
-  world.add(std::make_unique<sphere>(point3(-0.2, 0, 1.0), 0.1));
-  world.add(std::make_unique<sphere>(point3(0.2, 0, 1.0), 0.1));
-  world.add(std::make_unique<sphere>(point3(0, 100, 15.0), 100));
+  world.add(sphere(point3(0, 0, 1.0), 0.1));
+  world.add(sphere(point3(-0.2, 0, 1.0), 0.1));
+  world.add(sphere(point3(0.2, 0, 1.0), 0.1));
+  world.add(sphere(point3(0, 100, 15.0), 100));
 
   // Primitive Camera
   double focal_length = 1.0;

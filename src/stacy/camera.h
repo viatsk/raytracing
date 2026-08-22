@@ -83,7 +83,7 @@ class camera {
       
       if (using_shading_) {
         // vec3 direction = random_on_hemisphere(record.value().normal);
-        vec3 direction = record.value().normal + random_unit_vector();
+        vec3 direction = record.value().normal + random_unit_vector(); // Lambertian reflection? TODO.
         return 0.5 * ray_colour(ray(record.value().p, direction), max_depth - 1, world);
       }
       

@@ -8,7 +8,7 @@ cmake_minimum_required ( VERSION 3.1.0...4.0.0 )
 
 project ( RTWeekend LANGUAGES CXX )
 
-# Set to C++17
+# Set to C++20
 set ( CMAKE_CXX_STANDARD          20 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
@@ -23,7 +23,6 @@ set ( SOURCE_RT2
 
 set ( UTILS 
   src/stacy/colour.h
-  src/stacy/hittable.h
   src/stacy/ray.h
   src/stacy/vec3.h
   src/stacy/sphere.h
@@ -62,6 +61,8 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wsometimes-uninitialized) # Variable improperly initialized
     add_compile_options(-Wunused-variable) # Variable is defined but unused
 endif()
+
+message("Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 # Executables
 add_executable(rt1             src/stacy/ray-tracing1.cc)

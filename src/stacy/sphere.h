@@ -3,7 +3,7 @@
 
 #include <optional>
 
-#include "hittable.h"
+#include "ray.h"
 #include "vec3.h"
 
 // This should be used to set the hit record normal vector
@@ -16,12 +16,22 @@ vec3 normal_san(const ray& r, const vec3& outward_normal) {
     return (dot(r.direction(), outward_normal) < 0) ? outward_normal : -outward_normal;
 }
 
+// TODO: hit record will need to move to a common class
+// once there are more types of hittables.
+struct hit_record {
+  point3 p;
+  vec3 normal;
+  double t;
+  // TODO: This is not a good way to shade the objects
+  colour hit_colour_REMOVEME;
+  bool dont_shade = false;
+};
 
-class sphere : public hittable {
+class sphere {
  public:
   sphere(const point3& centre, double radius, colour colour = blue, bool dont_shade_override = false) : centre_(centre), radius_(radius), colour_(colour), dont_shade_override_(dont_shade_override){}
 
-  std::optional<hit_record> hit(const ray& r, double closest_so_far) const override {
+  std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
     vec3 sphere_centre = centre_ - r.origin();
     double a = r.direction().length_squared();
     double h = dot(r.direction(), sphere_centre);

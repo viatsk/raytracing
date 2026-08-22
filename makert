@@ -1,6 +1,6 @@
 #!/bin/bash -exh
 
-cmake -B build
+cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -B build
 cmake --build build --target $1
 ./build/$1 > out/$1.ppm
 display out/$1.ppm

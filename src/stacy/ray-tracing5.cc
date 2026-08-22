@@ -33,10 +33,10 @@ int main() {
 
   // World
   world world;
-  world.add(std::make_unique<sphere>(point3(0, 0, -1), 0.5));
-  world.add(std::make_unique<sphere>(point3(-1, 0, -1), 0.5));
-  world.add(std::make_unique<sphere>(point3(1, 0, -1), 0.5));
-  world.add(std::make_unique<sphere>(point3(0,-100.5,-1), 100));
+  world.add(sphere(point3(0, 0, -1), 0.5));
+  world.add(sphere(point3(-1, 0, -1), 0.5));
+  world.add(sphere(point3(1, 0, -1), 0.5));
+  world.add(sphere(point3(0,-100.5,-1), 100));
 
   // Viewport
   auto viewport_height = 2.0; // Why suggested 2?
