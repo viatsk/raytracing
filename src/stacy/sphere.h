@@ -19,8 +19,17 @@ vec3 normal_san(const ray& r, const vec3& outward_normal) {
     return (dot(r.direction(), outward_normal) < 0) ? outward_normal : -outward_normal;
 }
 
+template<typename T>
+concept HasScatterInterface = requires(T t) {
+    { t.scatter(std::declval<const ray&>(), std::declval<const hit_record&>()) } -> std::same_as<std::tuple<colour, ray>>;
+};
+
 class sphere {
- using material = std::variant<lambertian>; // TODO: Enforce material contract.
+  // Enforce that material variants have scatter implemented
+  template<HasScatterInterface... Ts>
+  using scatter_variant = std::variant<Ts...>;
+
+  using material = scatter_variant<lambertian, metallic>;
  
  public:
   sphere(const point3& centre, double radius) : centre_(centre), radius_(radius), mat_(lambertian(colour(0.5, 0.5, 0.5))) {}
@@ -52,7 +61,10 @@ class sphere {
     hit.normal = normal_san(r, norm);
 
     // TODO: We should have a material interface that enforces scatter.
-    auto [atten, scatter] = std::get<lambertian>(mat_).scatter(r, hit);
+    auto [atten, scatter] = std::visit(
+        [r, hit] (const auto& mat) { 
+          return mat.scatter(r, hit); 
+        }, mat_);
     hit.attenuation = atten;
     hit.scattered = scatter;
     return hit;

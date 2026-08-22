@@ -27,4 +27,24 @@ class lambertian {
   colour albedo_;
 };
 
+class metallic {
+ public:
+  metallic(const colour& albedo) : albedo_(albedo) {}
+
+  vec3 reflect(const vec3& v, const vec3& n) const {
+    // This assumes the normal n is a unit vector.
+    // If it wasn't, we need to divide the dot prod by length(n).
+    return v - 2*dot(v,n)*n;
+  }
+
+  std::tuple<colour, ray> scatter(const ray& r_in, const hit_record& rec) const {
+    vec3 reflection_direction = reflect(r_in.direction(), rec.normal);
+    return std::make_tuple(albedo_, ray(rec.p, reflection_direction));
+  }
+
+ private:
+  colour albedo_;
+};
+
+
 #endif

@@ -41,7 +41,7 @@ class camera {
     for (int h = 0; h < img_height_; h++) {
       std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
         for (int w = 0; w < img_width_; w++) {
-          int max_depth = 5;
+          int max_depth = 50;
           colour pixel_colour = black;
           vec3 pixel_centre = pixel00_loc + (w * pixel_delta_u) + (h * pixel_delta_v);
           vec3 ray_direction = pixel_centre - camera_centre_;

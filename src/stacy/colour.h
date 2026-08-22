@@ -17,6 +17,7 @@ static colour black = colour(0.0, 0.0, 0.0);
 // Based on artistic preference
 static colour light_blue = colour(0.5, 0.7, 1.0);
 static colour light_green = colour(0.565, 0.933, 0.565);
+static colour light_red = colour(0.85, 0.3, 0.3);
 static colour grey = colour(0.5, 0.5, 0.5);
 
 void write_colour(std::ostream& out, const colour& pixel_colour) {
