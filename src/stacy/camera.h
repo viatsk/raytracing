@@ -78,6 +78,9 @@ class camera {
   ray get_ray(int pixel_w, int pixel_h) const {
     // Offset is a random vector in the [-.5,-.5]-[+.5,+.5] unit square.
     vec3 offset = sample_unit_square();
+    if (samples_per_pixel_ == 1) {
+      offset = vec3(0,0,0);
+    }
     vec3 pixel_sample = pixel00_loc + ((pixel_w + offset.x())* pixel_delta_u) + ((pixel_h + offset.y()) * pixel_delta_v);
     vec3 ray_direction = pixel_sample - camera_centre_;
     return ray(/* ray origin = */camera_centre_, ray_direction);

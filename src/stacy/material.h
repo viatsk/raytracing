@@ -30,6 +30,7 @@ class lambertian {
 class metallic {
  public:
   metallic(const colour& albedo) : albedo_(albedo) {}
+  metallic(const colour& albedo, double fuzz) : albedo_(albedo), fuzz_(fuzz) {} 
 
   vec3 reflect(const vec3& v, const vec3& n) const {
     // This assumes the normal n is a unit vector.
@@ -39,11 +40,13 @@ class metallic {
 
   std::tuple<colour, ray> scatter(const ray& r_in, const hit_record& rec) const {
     vec3 reflection_direction = reflect(r_in.direction(), rec.normal);
-    return std::make_tuple(albedo_, ray(rec.p, reflection_direction));
+    vec3 fuzzed_reflextion_direction = unit_vector(reflection_direction) + (fuzz_ * random_unit_vector());
+    return std::make_tuple(albedo_, ray(rec.p, fuzzed_reflextion_direction));
   }
 
  private:
   colour albedo_;
+  double fuzz_ = 0.0; // default no fuzz
 };
 
 
