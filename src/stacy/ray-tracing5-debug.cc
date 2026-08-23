@@ -4,7 +4,6 @@
 #include "ray.h"
 #include "vec3.h"
 
-#include <memory>
 #include <iostream>
 
 vec3 stacy_lerp(vec3 start_value, vec3 end_value, float a) {

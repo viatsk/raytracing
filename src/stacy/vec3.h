@@ -130,23 +130,4 @@ inline vec3 sample_unit_square() {
   return vec3(random_double(0.0, 1.0) - 0.5, random_double(0.0, 1.0) - 0.5, 0);
 }
 
-// TODO: Confirm this works.
-// inline vec3 random_unit_vector_civilized() {
-//   vec3 unit_vector;
-//   for (int j = 0; j < 3; j++) {
-//     unit_vector.e[j] = random_double();
-//   }
-//   double normal = unit_vector.length();
-//   for (int j = 0; j < 3; j++) {
-//     unit_vector.e[j] = unit_vector.e[j] / normal;
-//   }
-//   return unit_vector;
-// }
-
-// inline vec3 random_on_hemisphere(const vec3& normal) {
-//   vec3 random_unit_vec = random_unit_vector();
-//   return (dot(random_unit_vec, normal) > 0.0) ? random_unit_vec : -random_unit_vec;
-// }
-
-
 #endif

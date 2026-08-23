@@ -1,11 +1,4 @@
 #include "colour.h"
-#include "vec3.h"
-
-#include <iostream>
-
-
-
-#include "colour.h"
 #include "ray.h"
 #include "vec3.h"
 

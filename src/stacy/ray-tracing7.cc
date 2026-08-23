@@ -2,7 +2,6 @@
 #include "sphere.h"
 #include "world.h"
 
-#include <memory>
 #include <iostream>
 
 int main() {
