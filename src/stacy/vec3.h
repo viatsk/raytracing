@@ -125,6 +125,11 @@ inline vec3 random_unit_vector() {
     }
 }
 
+// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+inline vec3 sample_unit_square() {
+  return vec3(random_double(0.0, 1.0) - 0.5, random_double(0.0, 1.0) - 0.5, 0);
+}
+
 // TODO: Confirm this works.
 // inline vec3 random_unit_vector_civilized() {
 //   vec3 unit_vector;

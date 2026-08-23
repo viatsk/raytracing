@@ -9,7 +9,7 @@
 
 class camera {
  public:
-  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = /*1280*/ 3840 ) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
+  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
     img_height_ = int(img_width / aspect_ratio);
 
     auto focal_length = (camera_centre_ - scene_centre).length();
@@ -32,6 +32,9 @@ class camera {
 
     vec3 Q = camera_centre_ - (focal_length * w) - viewport_u/2 - viewport_v/2;
     pixel00_loc = Q + (0.5 * (pixel_delta_u + pixel_delta_v));
+
+    // Anti-aliassing weighs the pixel colour by the number of sample rays per pixel.
+    pixels_colour_scale_ = 1.0 / samples_per_pixel_;
   }
 
   void render(const world& world) {
@@ -41,13 +44,12 @@ class camera {
     for (int h = 0; h < img_height_; h++) {
       std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
         for (int w = 0; w < img_width_; w++) {
-          int max_depth = 50;
           colour pixel_colour = black;
-          vec3 pixel_centre = pixel00_loc + (w * pixel_delta_u) + (h * pixel_delta_v);
-          vec3 ray_direction = pixel_centre - camera_centre_;
-          ray r(camera_centre_, ray_direction); // So all rays come from the camera centre.
-          pixel_colour += ray_colour(r, max_depth, world);
-          write_colour(std::cout, pixel_colour);
+          for (int sample = 0; sample < samples_per_pixel_; sample++) {
+            ray r = get_ray(w, h);
+            pixel_colour += ray_colour(r, max_depth_, world);
+          }
+          write_colour(std::cout, pixels_colour_scale_ * pixel_colour);
       }
     }
     std::clog << "\r Done! \n";
@@ -57,11 +59,29 @@ class camera {
     using_shading_ = is_using_shading;
   }
 
+  void set_samples_per_pixel(int samples_per_pixel) {
+    samples_per_pixel_ = samples_per_pixel;
+    pixels_colour_scale_ = 1.0 / samples_per_pixel_;
+  }
+
+  void set_max_depth(int max_depth) {
+    max_depth_ = max_depth;
+  }
+
   // TODO: Implement camera pan
   point3 scene_centre   = point3(0,0,-1);  // Point camera is looking at.
   vec3   vup      = vec3(0,1,0);     // Camera-relative "up" direction.
 
  private:
+
+  // Sample a random point and tracing a ray through that point.
+  ray get_ray(int pixel_w, int pixel_h) const {
+    // Offset is a random vector in the [-.5,-.5]-[+.5,+.5] unit square.
+    vec3 offset = sample_unit_square();
+    vec3 pixel_sample = pixel00_loc + ((pixel_w + offset.x())* pixel_delta_u) + ((pixel_h + offset.y()) * pixel_delta_v);
+    vec3 ray_direction = pixel_sample - camera_centre_;
+    return ray(/* ray origin = */camera_centre_, ray_direction);
+  }
 
   vec3 stacy_lerp(vec3 start_value, vec3 end_value, float a) {
     return (1.0-a)*start_value + a*end_value;
@@ -98,6 +118,11 @@ class camera {
   double aspect_ratio_;
   int img_width_;
   int img_height_; // derived from width
+  // Defaults are low easy debug.
+  // TODO: Make a config constructor w/ debug & prod modes.
+  int samples_per_pixel_ = 1;
+  int max_depth_ = 5;
+  double pixels_colour_scale_ = 1.0 / samples_per_pixel_; // derived from samples_per_pixel;
 
   // Viewport setup
   vec3 pixel00_loc;
