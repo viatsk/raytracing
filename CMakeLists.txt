@@ -86,3 +86,4 @@ add_executable(rt7             ${UTILS} ${PROJ_MATRIX_CAMERA} src/stacy/ray-trac
 # Materials implemented
 add_executable(rt8             ${UTILS} src/stacy/ray-tracing8.cc)
 add_executable(rt9             ${UTILS} src/stacy/ray-tracing9.cc)
+add_executable(rt10            ${UTILS} src/stacy/ray-tracing10.cc)
