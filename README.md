@@ -1,34 +1,50 @@
-Ray Tracing in One Weekend
+Ray Tracing (ongoing)
 ====================================================================================================
 
 This is my raytracer implementation based on the "Ray Tracing In One Weekend" series.
 Here is the current state of my spheres:
 
-| ![foo][out7_FIXED] | ![foo][out7_FIXED3]  |
-|:---------------------------:| :---------------------------:|
+### Metallic:
 
-And here are some arbitrary camera angles I was proud of that don't currently look good with my diffuse lighting attempts: 
+| ![foo][out8_all]  |
+|:---------------------------:|
+|Three metallic spheres (no fuzz)|
 
+### Dielectric:
+| ![foo][out9_glass_on_metal] | ![foo][out10] |
+|:---------------------------:|:---------------------------:|
+|Dielectric sphere on metal|Glass (two-layer dielectric), diffuse, and fuzzy metal|
+
+
+### And here are some arbitrary camera angles I was proud of (as of rt6): 
 
 | ![foo][out6_far] | ![RT The Next Week][out6_near] | ![foo][out6_side] | ![RT The Next Week][out6_top_left] |
 |:----------------------------:|:---------------------------:|:----------------------------:|:---------------------------:|
 |   Spheres far    |  Spheres near | spheres from the side | spheres from the top | 
 
-Implementation
-------------------
-I am reading and following the [textbook] out-of-order. Here are my plans for what to tackle next:
+## Next Steps
+I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook2] out-of-order, but the spheres are taking too long to render to iterate quickly so my plans are to tackle performance bottlenecks. Roughly, this looks like:
 
-* [x] Factor out the camera implementation to debug the warped effect
-  * see [rt5] and [rt5dbg]
-* [x] _sort of complete_ Understand why the colours are different between the two camera approaches
-* [ ] **WIP**: Add a light source and shade accordingly
-* [ ] Move away from virtual dispatch
-* [ ] Understand stratified sampling (?)
-* [ ] Benchmark different ways of randomly generating unit spheres 
-* [ ] Add different sphere materials
-* [ ] Anti-aliasing
-* [ ] Cube?
-* [ ] Parallel Rust implementation?
+### Performance
+  * [ ] Add as many threads as there are cores on machine
+  * [ ] Profile
+  * [ ] **WIP**: Move away from virtual dispatch
+      - Cool part: Implement interface concept using C++20 `contract`, `std::varient` and `std::visit` rather than inheriting from an abstract class
+  * [ ] Understand stratified sampling (?)
+  * [ ] Benchmark different ways of randomly generating unit spheres 
+
+### Features 
+  * [x] Factor out the camera implementation to debug the warped effect
+    * see [rt5] and [rt5dbg]
+  * [x] Understand why the colours are different between the two camera approaches
+  * [x] Add a diffuse lighting and shade accordingly
+  * [x] Add different sphere materials
+  * [x] Anti-aliasing
+  * [ ] Understand cosine normal sampling
+  * [ ] Feature flag to disable reflectance in dielectric materials
+  * [ ] Cube?
+  * [ ] Defocus blur 
+  * [x] ~~Parallel Rust implementation?~~
 
 ### Files
 The files in `src/stacy` act as "checkpoints" along the journey to render 1001 spheres:
@@ -40,6 +56,9 @@ The files in `src/stacy` act as "checkpoints" along the journey to render 1001 s
 - [rt5] introduces the concept of the "world" with objects in the world, checks hit intersections and returns the nearest one. [rt5dbg] diverges in terms of camera setup.
 - [rt6] factors out the camera and applies vertial-field-of-view transforms
 - [rt7] tries to introduce diffuse lighting and shadow interactions between the spheres, currently breaking camera.
+- [rt8] renders metal spheres
+- [rt9] adds dielectric spheres. when the metal fuzz factor is 0, they act like spherical mirrors
+- [rt10] renders all three materials in one scene
 
 The spheres will be improving.
 
@@ -55,6 +74,9 @@ The spheres will be improving.
 [out7_FIXED]:      out/rt7_lotsofpixels_onesphere.png
 [out7_FIXED3]:     out/rt7_lotsofpixels.png
 [out7_side]:       out/rt7_lotsofpixels_side.png
+[out8_all]:        out/rt8_maxdepth50_all.png
+[out9_glass_on_metal]: out/rt9_highfidelity_onesphere.png
+[out10]: out/rt10_no_reflectance.jpg
 [rt1]:             src/stacy/ray-tracing1.cc
 [rt2]:             src/stacy/ray-tracing2.cc
 [rt3]:             src/stacy/ray-tracing3.cc
@@ -64,4 +86,8 @@ The spheres will be improving.
 [rt5dbg]:          src/stacy/ray-tracing5-debug.cc
 [rt6]:             src/stacy/ray-tracing6.cc
 [rt7]:             src/stacy/ray-tracing7.cc
+[rt8]:             src/stacy/ray-tracing8.cc
+[rt9]:             src/stacy/ray-tracing9.cc
+[rt10]:            src/stacy/ray-tracing10.cc
 [textbook]:        https://raytracing.github.io/books/RayTracingInOneWeekend.html
+[textbook2]:       https://raytracing.github.io/books/RayTracingTheNextWeek.html
