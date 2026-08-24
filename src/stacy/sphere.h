@@ -14,7 +14,9 @@
 // then we are inside the sphere. If it's negative we are outside
 // the sphere. We always want to be outside the sphere so return
 // -outward_normal if the ray is inside.
-// This will become relevant for materials later.
+// Also store a record of whether or not the ray is inside the
+// sphere, in order to correctly implement refraction.
+// TODO: Revisit where this function should go.
 vec3 normal_san(const ray& r, const vec3& outward_normal) {
     return (dot(r.direction(), outward_normal) < 0) ? outward_normal : -outward_normal;
 }
@@ -29,7 +31,7 @@ class sphere {
   template<HasScatterInterface... Ts>
   using scatter_variant = std::variant<Ts...>;
 
-  using material = scatter_variant<lambertian, metallic>;
+  using material = scatter_variant<lambertian, metallic, dielectric>;
  
  public:
   sphere(const point3& centre, double radius) : centre_(centre), radius_(radius), mat_(lambertian(colour(0.5, 0.5, 0.5))) {}
@@ -59,6 +61,7 @@ class sphere {
     hit.p = r.at(root); // value of the traced ray at the root
     vec3 norm = (r.at(root) - centre_) / radius_;
     hit.normal = normal_san(r, norm);
+    hit.inner_face = (hit.normal != norm) ? true : false;
 
     // TODO: We should have a material interface that enforces scatter.
     auto [atten, scatter] = std::visit(

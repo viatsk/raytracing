@@ -11,6 +11,7 @@ struct hit_record {
   double t;
   colour attenuation;
   ray scattered;
+  bool inner_face; // refracted ray
 };
 
 #endif

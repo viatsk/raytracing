@@ -12,9 +12,18 @@ inline double random_double() {
     return distribution(generate);
 }
 
+// Number + Trig Utilities
+inline double random_double_zero_to_one() {
+    std::random_device rd;
+    std::mt19937 generate(rd());
+
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(generate);
+}
+
 inline double random_double(double min, double max) {
     // Returns a random real in [min,max).
-    return min + (max-min)*random_double();
+    return min + (max-min)*random_double_zero_to_one();
 }
 
 const double pi = 3.1415926535897932385;
