@@ -6,9 +6,9 @@ Here is the current state of my spheres:
 
 ### Metallic:
 
-| ![foo][out8_all]  |
-|:---------------------------:|
-|Three metallic spheres (no fuzz)|
+| ![foo][out8_all]  | ![foo][outfinal]  |
+|:---------------------------:|:---------------------------:|
+|Three metallic spheres (no fuzz)| Showing off all interactions |
 
 ### Dielectric:
 | ![foo][out9_glass_on_metal] | ![foo][out10] |
@@ -76,7 +76,8 @@ The spheres will be improving.
 [out7_side]:       out/rt7_lotsofpixels_side.png
 [out8_all]:        out/rt8_maxdepth50_all.png
 [out9_glass_on_metal]: out/rt9_highfidelity_onesphere.png
-[out10]: out/rt10_no_reflectance.jpg
+[out10]:          out/rt10_no_reflectance.jpg
+[outfinal]:          out/rtfinal.png
 [rt1]:             src/stacy/ray-tracing1.cc
 [rt2]:             src/stacy/ray-tracing2.cc
 [rt3]:             src/stacy/ray-tracing3.cc

@@ -115,6 +115,10 @@ inline static vec3 random_vec3() {
   return vec3(random_double(), random_double(), random_double());
 }
 
+inline static vec3 random_vec3_zero_to_one() {
+  return vec3(random_double_zero_to_one(), random_double_zero_to_one(), random_double_zero_to_one());
+}
+
 // TODO this sucks and I hate it.
 inline vec3 random_unit_vector() {
     while (true) {
