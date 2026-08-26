@@ -12,6 +12,8 @@ project ( RTWeekend LANGUAGES CXX )
 set ( CMAKE_CXX_STANDARD          20 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
+set ( THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 # Source
 
@@ -90,3 +92,4 @@ add_executable(rt10            ${UTILS} src/stacy/ray-tracing10.cc)
 
 # Final
 add_executable(rtfinal            ${UTILS} src/stacy/ray-tracingfinal.cc)
+target_link_libraries(rtfinal PRIVATE Threads::Threads)

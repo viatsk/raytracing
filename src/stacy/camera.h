@@ -6,11 +6,13 @@
 #include "world.h"
 
 #include <optional>
+#include <thread>
 
 class camera {
  public:
   camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
     img_height_ = int(img_width / aspect_ratio);
+    total_num_pixels_ = (img_height_ * img_width_);
 
     auto focal_length = (camera_centre_ - scene_centre).length();
     auto theta = degrees_to_radians(vfov_);
@@ -35,21 +37,51 @@ class camera {
 
     // Anti-aliassing weighs the pixel colour by the number of sample rays per pixel.
     pixels_colour_scale_ = 1.0 / samples_per_pixel_;
+
+    // Reserve space for results.
+    results_.reserve(img_width_ * img_height_);
   }
+
 
   void render(const world& world) {
     // Write PPM file
     std::cout << "P3\n" << img_width_ << ' ' << img_height_ << "\n255\n";
 
+    unsigned int num_cores = std::thread::hardware_concurrency();
+    std::vector<std::thread> threads;
+    threads.reserve(num_cores);
+
+
+    std::atomic<int> index_counter{0};
+    auto worker_fn = [&](){
+      while (true) {
+        int n = index_counter.fetch_add(1, std::memory_order_relaxed);
+        if (n > total_num_pixels_)
+          break;
+
+        colour pixel_colour = black;
+        int w = n % img_width_;
+        int h = int(n / img_width_); 
+        for (int sample = 0; sample < samples_per_pixel_; sample++) {
+          // std::clog << "\r Pixels remaining: " << (total_num_pixels_ - ((h * img_width_) + w)) <<  " \n "; // << std::flush;
+          ray r = get_ray(w, h);
+          pixel_colour += pixels_colour_scale_ * ray_colour(r, max_depth_, world);
+        }
+        results_[n] = pixel_colour;
+      }
+    };
+
+    for (unsigned int i = 0; i < num_cores; ++i) {
+        threads.emplace_back(worker_fn);
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
     for (int h = 0; h < img_height_; h++) {
       std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
-        for (int w = 0; w < img_width_; w++) {
-          colour pixel_colour = black;
-          for (int sample = 0; sample < samples_per_pixel_; sample++) {
-            ray r = get_ray(w, h);
-            pixel_colour += ray_colour(r, max_depth_, world);
-          }
-          write_colour(std::cout, pixels_colour_scale_ * pixel_colour);
+      for (int w = 0; w < img_width_; w++) {
+        write_colour(std::cout, results_[(h * img_width_) + w]);
       }
     }
     std::clog << "\r Done! \n";
@@ -121,6 +153,7 @@ class camera {
   double aspect_ratio_;
   int img_width_;
   int img_height_; // derived from width
+  int total_num_pixels_;
   // Defaults are low easy debug.
   // TODO: Make a config constructor w/ debug & prod modes.
   int samples_per_pixel_ = 1;
@@ -135,6 +168,7 @@ class camera {
 
   // Feature flags. TODO: Remove.
   bool using_shading_ = false;
+  std::vector<colour> results_;
 };
 
 #endif

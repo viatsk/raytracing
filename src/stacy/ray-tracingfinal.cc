@@ -8,7 +8,7 @@ int main() {
   world world;
 
   // ground 
-  world.add(sphere(point3(0,-1000,-1), 1000, metallic(light_green)));
+  world.add(sphere(point3(0,-1000,-1), 1000, lambertian(light_green)));
 
   // little spheres
   for (int a = -15; a < 15; a++) {
@@ -42,8 +42,8 @@ int main() {
 
   camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 3840);
   cam.set_using_shading(true);
-  cam.set_max_depth(15);
-  cam.set_samples_per_pixel(1);
+  cam.set_max_depth(25);
+  cam.set_samples_per_pixel(8);
 
   cam.render(world);
 
