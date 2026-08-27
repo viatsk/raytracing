@@ -26,10 +26,13 @@ Here is the current state of my spheres:
 I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook2] out-of-order, but the spheres are taking too long to render to iterate quickly so my plans are to tackle performance bottlenecks. Roughly, this looks like:
 
 ### Performance
-  * [ ] Add as many threads as there are cores on machine
+  * [x] Add as many threads as there are cores on machine
+    * [ ] Benchmark using `std::atomic<int>` (dynamic allocation) vs assigning batching pixels by multiple of thread id (static allocation).
+  * [ ] Introduce a debug mode that outputs the cost of each tile (time spent rendering that tile mapped by colour)
   * [ ] Profile
   * [ ] **WIP**: Move away from virtual dispatch
       - Cool part: Implement interface concept using C++20 `contract`, `std::varient` and `std::visit` rather than inheriting from an abstract class
+      - https://godbolt.org/z/h7Tn9axx7 vs using C++20 https://godbolt.org/z/E3vb5v1n8
   * [ ] Understand stratified sampling (?)
   * [ ] Benchmark different ways of randomly generating unit spheres 
 
@@ -43,7 +46,7 @@ I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook
   * [ ] Understand cosine normal sampling
   * [ ] Feature flag to disable reflectance in dielectric materials
   * [ ] Cube?
-  * [ ] Defocus blur 
+  * [ ] Defocus blur for more camera-like rendering
   * [x] ~~Parallel Rust implementation?~~
 
 ### Files
