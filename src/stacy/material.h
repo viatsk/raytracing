@@ -8,6 +8,12 @@
 
 #include <tuple>
 
+vec3 reflect(const vec3& v, const vec3& n) const {
+    // This assumes the normal n is a unit vector.
+    // If it wasn't, we need to divide the dot prod by length(n).
+    return v - 2*dot(v,n)*n;
+}
+
 class lambertian {
  public:
   lambertian(const colour& albedo) : albedo_(albedo) {}
@@ -32,13 +38,6 @@ class metallic {
   metallic(const colour& albedo) : albedo_(albedo) {}
   metallic(const colour& albedo, double fuzz) : albedo_(albedo), fuzz_(fuzz) {} 
 
-  // TODO make into a helper fn
-  vec3 reflect(const vec3& v, const vec3& n) const {
-    // This assumes the normal n is a unit vector.
-    // If it wasn't, we need to divide the dot prod by length(n).
-    return v - 2*dot(v,n)*n;
-  }
-
   std::tuple<colour, ray> scatter(const ray& r_in, const hit_record& rec) const {
     vec3 reflection_direction = reflect(r_in.direction(), rec.normal);
     vec3 fuzzed_reflextion_direction = unit_vector(reflection_direction) + (fuzz_ * random_unit_vector());
@@ -53,13 +52,6 @@ class metallic {
 class dielectric {
  public:
   dielectric(double refraction_idx) : refraction_idx_(refraction_idx) {}
-
-  // TODO make into a helper fn
-  vec3 reflect(const vec3& v, const vec3& n) const {
-    // This assumes the normal n is a unit vector.
-    // If it wasn't, we need to divide the dot prod by length(n).
-    return v - 2*dot(v,n)*n;
-  }
 
   // assumes both incident and n are unit vectors!
   vec3 refract(const vec3& indicent, const vec3& n, double refractive_idx_ratio) const {
@@ -79,7 +71,7 @@ class dielectric {
     double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
 
     vec3 scatter_ray;
-    if (((refraction_ratio * sin_theta) > 1.0)  ||
+    if (((refraction_ratio * sin_theta) > 1.0) ||
          (reflectance(cos_theta, refraction_ratio) > random_double_zero_to_one())) {
       // Cannot refract this ray - it gets reflected
       scatter_ray = reflect(unit_direction_r_in, rec.normal);

@@ -63,7 +63,6 @@ class sphere {
     hit.normal = normal_san(r, norm);
     hit.inner_face = (hit.normal != norm) ? true : false;
 
-    // TODO: We should have a material interface that enforces scatter.
     auto [atten, scatter] = std::visit(
         [r, hit] (const auto& mat) { 
           return mat.scatter(r, hit); 
