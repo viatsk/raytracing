@@ -11,7 +11,7 @@
 enum ColourMode {
   Scene,
   NormalsOnly,
-  // NumBounces,
+  NumBounces,
   // NumHitTestCalls,
 };
 
@@ -129,9 +129,10 @@ class camera {
     return (1.0-a)*start_value + a*end_value;
   }
 
+  // TODO: Clean up this function, it's getting messy.
   colour ray_colour(const ray& r, int max_depth, const world& world) {
     if (!max_depth) {
-      return black;
+      return white;
     }
 
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
@@ -144,6 +145,9 @@ class camera {
         case ColourMode::NormalsOnly:
           return 0.5 * (record.value().normal + white);
           break;
+        case ColourMode::NumBounces:
+          return 1.0 * ray_colour(rec_value.scattered, max_depth-1, world);
+          break;
       }
     }
 
@@ -151,6 +155,10 @@ class camera {
     vec3 unit_direction = unit_vector(r.direction());
     double a = 0.5 * (unit_direction.y() + 1.0);
 
+    if (mode_ == ColourMode::NumBounces) {
+      double x = double(double(max_depth_ - max_depth)/double(max_depth_));
+      return x * white;
+    }
     return stacy_lerp(blue, white, a);
   }
 
