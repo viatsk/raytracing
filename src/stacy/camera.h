@@ -8,6 +8,13 @@
 #include <optional>
 #include <thread>
 
+enum ColourMode {
+  Scene,
+  NormalsOnly,
+  // NumBounces,
+  // NumHitTestCalls,
+};
+
 class camera {
  public:
   camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
@@ -79,16 +86,12 @@ class camera {
     }
 
     for (int h = 0; h < img_height_; h++) {
-      std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
+      // std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
       for (int w = 0; w < img_width_; w++) {
         write_colour(std::cout, results_[(h * img_width_) + w]);
       }
     }
-    std::clog << "\r Done! \n";
-  }
-
-  void set_using_shading(bool is_using_shading){
-    using_shading_ = is_using_shading;
+    // std::clog << "\r Done! \n";
   }
 
   void set_samples_per_pixel(int samples_per_pixel) {
@@ -98,6 +101,10 @@ class camera {
 
   void set_max_depth(int max_depth) {
     max_depth_ = max_depth;
+  }
+
+  void set_colour_mode(ColourMode mode) {
+    mode_ = mode;
   }
 
   // TODO: Implement camera pan
@@ -126,16 +133,18 @@ class camera {
     if (!max_depth) {
       return black;
     }
+
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
     if (record.has_value()) {
-      
-      if (using_shading_) {
-        auto rec_value = record.value();
-        return rec_value.attenuation * ray_colour(rec_value.scattered, max_depth-1, world);
+      auto rec_value = record.value();
+      switch (mode_) {
+        case ColourMode::Scene:
+          return rec_value.attenuation * ray_colour(rec_value.scattered, max_depth-1, world);
+          break;
+        case ColourMode::NormalsOnly:
+          return 0.5 * (record.value().normal + white);
+          break;
       }
-      
-      // Default: Normal shading
-      return 0.5 * (record.value().normal + white);
     }
 
     // Background gradient
@@ -148,6 +157,7 @@ class camera {
   // Camera setup
   point3 camera_centre_;
   double vfov_; // Vertical field of view
+  ColourMode mode_ = ColourMode::Scene;
 
   // Image dimensions
   double aspect_ratio_;
@@ -166,8 +176,7 @@ class camera {
   vec3 pixel_delta_v;
   vec3 u, v, w;  // Camera frame basis vectors
 
-  // Feature flags. TODO: Remove.
-  bool using_shading_ = false;
+  // Paralellization
   std::vector<colour> results_;
 };
 

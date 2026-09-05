@@ -13,7 +13,6 @@ int main() {
   world.add(sphere(point3(0,-100.5,-1), 100, metallic(light_green)));
 
   camera cam(/*camera_centre_=*/point3(3,2,1), /*vfov_=*/40);
-  cam.set_using_shading(true);
 
   cam.render(world);
 
