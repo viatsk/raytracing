@@ -35,6 +35,7 @@ class world {
   // hittable requires hitting anything
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
     std::optional<hit_record> hit;
+    uint num_hit_tests = 0;
     auto closest = closest_so_far;
 
     for (const hittable& object : objects_) {
@@ -43,7 +44,9 @@ class world {
           return object.hit(r, closest); 
         }, object);
       if (tmp_rec.has_value()) {
+        num_hit_tests++;
         closest = tmp_rec.value().t;
+        tmp_rec.value().num_hit_tests = num_hit_tests;
         hit = tmp_rec;
       }
     }

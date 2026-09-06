@@ -12,6 +12,8 @@ struct hit_record {
   colour attenuation;
   ray scattered;
   bool inner_face; // refracted ray
+  // DEBUG ONLY
+  uint num_hit_tests;
 };
 
 #endif

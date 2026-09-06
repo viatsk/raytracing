@@ -12,7 +12,7 @@ enum ColourMode {
   Scene,
   NormalsOnly,
   NumBounces,
-  // NumHitTestCalls,
+  NumHitTestCalls,
 };
 
 class camera {
@@ -47,6 +47,7 @@ class camera {
 
     // Reserve space for results.
     results_.reserve(img_width_ * img_height_);
+    num_hits_.reserve(img_width_ * img_height_);
   }
 
 
@@ -148,6 +149,12 @@ class camera {
         case ColourMode::NumBounces:
           return 1.0 * ray_colour(rec_value.scattered, max_depth-1, world);
           break;
+        case ColourMode::NumHitTestCalls:
+          double Ld = (record.value().num_hit_tests / double(1.0 + record.value().num_hit_tests));
+          if (Ld > 0 && Ld != 0.5)
+          std::clog << "LD: " << Ld << "\n" << std::flush;
+          return Ld * ray_colour(rec_value.scattered, max_depth-1, world);
+          break;
       }
     }
 
@@ -158,6 +165,9 @@ class camera {
     if (mode_ == ColourMode::NumBounces) {
       double x = double(double(max_depth_ - max_depth)/double(max_depth_));
       return x * white;
+    }
+    if (mode_ == ColourMode::NumHitTestCalls) {
+      return white;
     }
     return stacy_lerp(blue, white, a);
   }
@@ -186,6 +196,7 @@ class camera {
 
   // Paralellization
   std::vector<colour> results_;
+  std::vector<uint> num_hits_;
 };
 
 #endif
