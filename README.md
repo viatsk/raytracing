@@ -16,6 +16,11 @@ Here is the current state of my spheres:
 |Dielectric sphere on metal|Glass (two-layer dielectric), diffuse, and fuzzy metal|
 
 
+### New Debug Mode (#hit tests):
+| ![foo][debugexample] | <div style="width:400px">![foo][debugexample2]</div>  |
+|:---------------------------:|:---------------------------:|
+| Three different materials |  Comples Scene|
+
 ### And here are some arbitrary camera angles I was proud of (as of rt6): 
 
 | ![foo][out6_far] | ![RT The Next Week][out6_near] | ![foo][out6_side] | ![RT The Next Week][out6_top_left] |
@@ -28,7 +33,7 @@ I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook
 ### Performance
   * [x] Add as many threads as there are cores on machine
     * [ ] Benchmark using `std::atomic<int>` (dynamic allocation) vs assigning batching pixels by multiple of thread id (static allocation).
-  * [ ] Introduce a debug mode that outputs the cost of each tile (time spent rendering that tile mapped by colour)
+  * [x] Introduce a debug mode that outputs the cost of each tile (time spent rendering that tile mapped by colour)
   * [ ] Profile
   * [ ] **WIP**: Move away from virtual dispatch
       - Cool part: Implement interface concept using C++20 `contract`, `std::varient` and `std::visit` rather than inheriting from an abstract class
@@ -95,3 +100,6 @@ The spheres will be improving.
 [rt10]:            src/stacy/ray-tracing10.cc
 [textbook]:        https://raytracing.github.io/books/RayTracingInOneWeekend.html
 [textbook2]:       https://raytracing.github.io/books/RayTracingTheNextWeek.html
+[debugexample]:    out/rt11NUMHITS.jpg
+[debugexample2]:   out/rtfinalDebugGhosts2.jpg
+
