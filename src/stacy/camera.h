@@ -5,6 +5,7 @@
 #include "colour.h"
 #include "world.h"
 
+#include <algorithm>
 #include <optional>
 #include <thread>
 
@@ -12,7 +13,11 @@ enum ColourMode {
   Scene,
   NormalsOnly,
   NumBounces,
-  NumHitTestCalls,
+};
+
+struct ray_results {
+  colour pixel_colour;
+  uint num_hittests;
 };
 
 class camera {
@@ -48,6 +53,7 @@ class camera {
     // Reserve space for results.
     results_.reserve(img_width_ * img_height_);
     num_hits_.reserve(img_width_ * img_height_);
+    num_hits_.resize(img_width_ * img_height_);
   }
 
 
@@ -68,14 +74,18 @@ class camera {
           break;
 
         colour pixel_colour = black;
+        double num_hits = 0;
         int w = n % img_width_;
         int h = int(n / img_width_); 
         for (int sample = 0; sample < samples_per_pixel_; sample++) {
           // std::clog << "\r Pixels remaining: " << (total_num_pixels_ - ((h * img_width_) + w)) <<  " \n "; // << std::flush;
           ray r = get_ray(w, h);
-          pixel_colour += pixels_colour_scale_ * ray_colour(r, max_depth_, world);
+          ray_results pixel_info = ray_colour(r, max_depth_, world);
+          pixel_colour += pixels_colour_scale_ * pixel_info.pixel_colour;
+          num_hits = double(pixel_info.num_hittests);
         }
         results_[n] = pixel_colour;
+        num_hits_[n] = num_hits;
       }
     };
 
@@ -86,6 +96,15 @@ class camera {
         thread.join();
     }
 
+    if (recolour_using_debug_info_) {
+      auto max_it = std::max_element(num_hits_.begin(), num_hits_.end());
+      const double max_val = *max_it;
+      std::transform(num_hits_.begin(), num_hits_.end(), results_.begin(), [max_val](double result) {
+        return inferno(result / max_val);
+      });
+    }
+
+    std::clog << std::flush;
     for (int h = 0; h < img_height_; h++) {
       // std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
       for (int w = 0; w < img_width_; w++) {
@@ -106,6 +125,10 @@ class camera {
 
   void set_colour_mode(ColourMode mode) {
     mode_ = mode;
+  }
+
+  void set_recolour_using_debug_info(bool recolour_using_debug_info){
+    recolour_using_debug_info_ = recolour_using_debug_info;
   }
 
   // TODO: Implement camera pan
@@ -131,29 +154,24 @@ class camera {
   }
 
   // TODO: Clean up this function, it's getting messy.
-  colour ray_colour(const ray& r, int max_depth, const world& world) {
+  ray_results ray_colour(const ray& r, int max_depth, const world& world) {
     if (!max_depth) {
-      return white;
+      return ray_results{white, 0};
     }
 
     std::optional<hit_record> record = world.hit(r, std::numeric_limits<double>::infinity());
     if (record.has_value()) {
       auto rec_value = record.value();
+      auto bounce = ray_colour(rec_value.scattered, max_depth-1, world);
       switch (mode_) {
         case ColourMode::Scene:
-          return rec_value.attenuation * ray_colour(rec_value.scattered, max_depth-1, world);
+          return ray_results{rec_value.attenuation * bounce.pixel_colour, rec_value.num_hit_tests + bounce.num_hittests};
           break;
-        case ColourMode::NormalsOnly:
-          return 0.5 * (record.value().normal + white);
+        case ColourMode::NormalsOnly: // No bounces
+          return ray_results{0.5 * (record.value().normal + white), rec_value.num_hit_tests};
           break;
         case ColourMode::NumBounces:
-          return 1.0 * ray_colour(rec_value.scattered, max_depth-1, world);
-          break;
-        case ColourMode::NumHitTestCalls:
-          double Ld = (record.value().num_hit_tests / double(1.0 + record.value().num_hit_tests));
-          if (Ld > 0 && Ld != 0.5)
-          std::clog << "LD: " << Ld << "\n" << std::flush;
-          return Ld * ray_colour(rec_value.scattered, max_depth-1, world);
+          return ray_results{bounce.pixel_colour, rec_value.num_hit_tests + bounce.num_hittests};
           break;
       }
     }
@@ -164,12 +182,9 @@ class camera {
 
     if (mode_ == ColourMode::NumBounces) {
       double x = double(double(max_depth_ - max_depth)/double(max_depth_));
-      return x * white;
+      return ray_results{x * white, 0};
     }
-    if (mode_ == ColourMode::NumHitTestCalls) {
-      return white;
-    }
-    return stacy_lerp(blue, white, a);
+    return ray_results{stacy_lerp(blue, white, a), 0};
   }
 
   // Camera setup
@@ -194,9 +209,12 @@ class camera {
   vec3 pixel_delta_v;
   vec3 u, v, w;  // Camera frame basis vectors
 
+  // Feature flags TODO remove
+  bool recolour_using_debug_info_;
+
   // Paralellization
   std::vector<colour> results_;
-  std::vector<uint> num_hits_;
+  std::vector<double> num_hits_;
 };
 
 #endif

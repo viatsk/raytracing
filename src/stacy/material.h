@@ -8,7 +8,7 @@
 
 #include <tuple>
 
-vec3 reflect(const vec3& v, const vec3& n) const {
+vec3 reflect(const vec3& v, const vec3& n) {
     // This assumes the normal n is a unit vector.
     // If it wasn't, we need to divide the dot prod by length(n).
     return v - 2*dot(v,n)*n;
@@ -71,8 +71,8 @@ class dielectric {
     double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
 
     vec3 scatter_ray;
-    if (((refraction_ratio * sin_theta) > 1.0) ||
-         (reflectance(cos_theta, refraction_ratio) > random_double_zero_to_one())) {
+    if (((refraction_ratio * sin_theta) > 1.0) // ||
+        /* (reflectance(cos_theta, refraction_ratio) > random_double_zero_to_one())*/) {
       // Cannot refract this ray - it gets reflected
       scatter_ray = reflect(unit_direction_r_in, rec.normal);
     } else {
