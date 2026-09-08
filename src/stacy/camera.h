@@ -96,6 +96,11 @@ class camera {
         thread.join();
     }
 
+    // Debug Info:
+    double total_hits = std::accumulate(num_hits_.begin(), num_hits_.end(), 0);
+    std::cerr << "Total Hits: " << total_hits << " (" << total_hits / (index_counter.load()) << "/pixel avg) \n";
+    std::cerr << "Most expensive hit: " << *std::max_element(num_hits_.begin(), num_hits_.end()) << "\n";
+
     if (recolour_using_debug_info_) {
       auto max_it = std::max_element(num_hits_.begin(), num_hits_.end());
       const double max_val = *max_it;
@@ -104,7 +109,6 @@ class camera {
       });
     }
 
-    std::clog << std::flush;
     for (int h = 0; h < img_height_; h++) {
       // std::clog << "\r Scanlines remaining: " << (img_height_ - h) <<  " " << std::flush;
       for (int w = 0; w < img_width_; w++) {
@@ -210,7 +214,7 @@ class camera {
   vec3 u, v, w;  // Camera frame basis vectors
 
   // Feature flags TODO remove
-  bool recolour_using_debug_info_;
+  bool recolour_using_debug_info_ = false;
 
   // Paralellization
   std::vector<colour> results_;
