@@ -41,9 +41,9 @@ int main() {
 
 
   camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 3840);
-  cam.set_using_shading(true);
-  cam.set_max_depth(25);
-  cam.set_samples_per_pixel(8);
+  cam.set_max_depth(5);
+  cam.set_samples_per_pixel(1);
+  cam.set_recolour_using_debug_info(true);
 
   cam.render(world);
 

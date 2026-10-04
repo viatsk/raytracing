@@ -63,7 +63,7 @@ using point3 = vec3;
 // Vector Utility Functions
 
 inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
-    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+    return out << "{" << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2] << "}";
 }
 
 inline bool operator==(const vec3& u, const vec3& v) {
@@ -128,10 +128,23 @@ inline vec3 random_unit_vector() {
             return p / sqrt(lensq);
     }
 }
+inline vec3 random_in_unit_disk() {
+    while (true) {
+        vec3 p = vec3(random_double(), random_double(), 0);
+        auto lensq = p.length_squared();
+        // It's going to eventually become confusing why
+        // we dont compare to a very small value here. 
+        // It's because this is for defocus blur, where the 
+        // other vector is for bouncing stuff.
+        if (lensq < 1)
+            return p;
+    }   
+}
 
 // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 inline vec3 sample_unit_square() {
-  return vec3(random_double(0.0, 1.0) - 0.5, random_double(0.0, 1.0) - 0.5, 0);
+  return vec3(random_double_zero_to_one() - 0.5, random_double_zero_to_one() - 0.5, 0);
 }
+
 
 #endif
