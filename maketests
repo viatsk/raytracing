@@ -1,0 +1,6 @@
+#!/bin/bash -exh
+
+cmake -B build
+cmake --build build --target unit_tests -j $(nproc)
+./build/unit_tests
+
