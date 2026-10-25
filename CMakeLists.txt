@@ -95,3 +95,28 @@ target_link_libraries(rt11 PRIVATE Threads::Threads)
 # Final
 add_executable(rtfinal            ${UTILS} src/stacy/ray-tracingfinal.cc)
 target_link_libraries(rtfinal PRIVATE Threads::Threads)
+
+
+# Unit testing CMAKE part
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest
+  GIT_TAG        v1.18.0
+)
+
+FetchContent_MakeAvailable(googletest)
+enable_testing()
+add_executable(unit_tests 
+  tests/bound3_tests.cc
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/stacy/bounds3.h"
+)
+target_link_libraries(unit_tests 
+  PRIVATE 
+    GTest::gtest_main
+)
+
+# Automatically finds all TEST() macros
+include(GoogleTest) # Provides gtest_discover_tests
+gtest_discover_tests(unit_tests)
+
