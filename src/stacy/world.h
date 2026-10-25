@@ -15,7 +15,9 @@ class world {
 
   // Add and remove objects
   void add(sphere object) {
-    objects_.push_back(std::move(object));
+    objects_.push_back(object);
+    bounding_box = box_union(bounding_box, object.bounding_box());
+    std::cerr << "BOX: " << bounding_box << "\n";
   }
   
   void clear() { objects_.clear(); }
@@ -36,11 +38,18 @@ class world {
       }
     }
   
+    // TODO: Implement HIT function for bound box.
+    // std::optional<hit_record> bounding_box_record = bounding_box.hit(r);
+    // if (bounding_box_record.has_value()) {
+    //   hit = bounding_box_record;
+    // }
+    
     return hit;
   }
 
  private:
   std::vector<sphere> objects_;
+  bounds3 bounding_box;
 };
 
 

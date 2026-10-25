@@ -23,13 +23,13 @@ set ( SOURCE_RT2
   src/stacy/vec3.h
 )
 
-set ( UTILS 
+set ( UTILS
+  src/stacy/bounds3.h
   src/stacy/common.h
   src/stacy/colour.h
   src/stacy/hit_record.h
   src/stacy/ray.h
   src/stacy/vec3.h
-  # TODO make a SHAPES set
   src/stacy/sphere.h
   # TODO make a MATERIALS set
   src/stacy/material.h

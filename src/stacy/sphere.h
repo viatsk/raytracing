@@ -1,6 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include "bounds3.h"
 #include "hit_record.h"
 #include "material.h"
 #include "ray.h"
@@ -70,6 +71,13 @@ class sphere {
     hit.attenuation = atten;
     hit.scattered = scatter;
     return hit;
+  }
+
+  bounds3 bounding_box() const {
+    vec3 radius_vec = vec3(radius_, radius_, radius_);
+    std::cerr << "Radius_vec:" << radius_vec << "\n";
+    std::cerr << "centre_:" << centre_ << "\n";
+    return bounds3(centre_ - radius_vec, centre_ + radius_vec);
   }
 
  private:
