@@ -75,8 +75,8 @@ class sphere {
 
   bounds3 bounding_box() const {
     vec3 radius_vec = vec3(radius_, radius_, radius_);
-    std::cerr << "Radius_vec:" << radius_vec << "\n";
-    std::cerr << "centre_:" << centre_ << "\n";
+    // std::cerr << "Radius_vec:" << radius_vec << "\n";
+    // std::cerr << "centre_:" << centre_ << "\n";
     return bounds3(centre_ - radius_vec, centre_ + radius_vec);
   }
 

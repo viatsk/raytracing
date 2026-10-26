@@ -17,10 +17,11 @@ class world {
   void add(sphere object) {
     objects_.push_back(object);
     bounding_box = box_union(bounding_box, object.bounding_box());
-    std::cerr << "BOX: " << bounding_box << "\n";
+    // std::cerr << "BOX: " << bounding_box << "\n";
   }
   
   void clear() { objects_.clear(); }
+  void render_aabbs(bool render) { debug_render_boxes_ = render; }
 
   // Rendering the world requires hitting anything
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
@@ -37,12 +38,13 @@ class world {
         hit = tmp_rec;
       }
     }
-  
-    // TODO: Implement HIT function for bound box.
-    // std::optional<hit_record> bounding_box_record = bounding_box.hit(r);
-    // if (bounding_box_record.has_value()) {
-    //   hit = bounding_box_record;
-    // }
+
+    if (debug_render_boxes_) {
+      std::optional<hit_record> bounding_box_record = bounding_box.hit_with_colour_info(r);
+      if (bounding_box_record.has_value()) {
+        hit = bounding_box_record;
+      }
+    }
     
     return hit;
   }
@@ -50,6 +52,7 @@ class world {
  private:
   std::vector<sphere> objects_;
   bounds3 bounding_box;
+  bool debug_render_boxes_ = false; 
 };
 
 
