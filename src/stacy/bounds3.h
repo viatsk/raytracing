@@ -6,10 +6,13 @@
 
 #include <optional>
 
+static constexpr double kMinDouble = std::numeric_limits<double>::lowest();
+static constexpr double kMaxDouble = std::numeric_limits<double>::max();
+
 class bounds3 {
  public:
   // Constructors
-  bounds3() {} // TODO: Make this into min_ = min float, max_ = max float?
+  bounds3() : min_(kMaxDouble, kMaxDouble, kMaxDouble), max_(kMinDouble, kMinDouble, kMinDouble){} // TODO: Make this into min_ = min float, max_ = max float?
   bounds3(const point3 &p): min_(p), max_(p) {}
   bounds3(const point3 &p1, const point3& p2):
         min_(std::min(p1.x(), p2.x()),
@@ -27,19 +30,40 @@ class bounds3 {
   }
 
   // Helper functions
-  // Returns the value at the 0..8th corner
-  point3 corner(int corner) const {
-    switch (corner) {
-        case 0: return min_;
-        case 1: return point3(max_.x(), min_.y(), min_.z());
-        case 2: return point3(min_.x(), max_.y(), min_.z());
-        case 3: return point3(max_.x(), max_.y(), min_.z());
-        case 4: return point3(min_.x(), min_.y(), max_.z());
-        case 5: return point3(max_.x(), min_.y(), max_.z());
-        case 6: return point3(min_.x(), max_.y(), max_.z());
-        case 7: return max_;
-        default: return min_;
+  double surface_area() const {
+    double length = max_.x() - min_.x();
+    double width = max_.y() - min_.y();
+    double height = max_.z() - min_.z();
+    return 2 * (length*width + width*height + length*height);
+  }
+
+  point3 centroid() const {
+    return (0.5 * min_) + (0.5 * max_);
+  }
+
+  vec3 diagonal() const {
+    return max_ - min_;
+  }
+
+  int max_extent() const {
+    vec3 diag = diagonal();
+    return (diag.x() > diag.y()) ? 
+                        (diag.x() > diag.z() ? 0 : 2)
+                      : (diag.y() > diag.z() ? 1 : 2);
+  }
+
+  // offset() returns the continuous position of a
+  // point relative to the corners of the box,
+  // where a point at the minimum corner has offset of (0, 0, 0)
+  // and a point at the maximum corner has offset of (1, 1, 1). 
+  vec3 offset(const point3 &p) const {
+    vec3 offset = p - min_;
+    for (int axis : {0, 1, 2}) {
+      if (max_[axis] > min_[axis]) {
+        offset[axis] /= (max_[axis] - min_[axis]);
+      }
     }
+    return offset;
   }
 
   // Filtering on the hit test function that allows the AABB be drawn.
@@ -116,12 +140,8 @@ class bounds3 {
 };
 
 // bounds3 Utility Functions
-// TODO: Use extants instead.
 inline std::ostream& operator<<(std::ostream& out, const bounds3& b) {
-    out << "bounds3{";
-    for (int i = 0; i < 8; i++) {
-       out << b.corner(i) << " ";
-    }
+    out << "bounds3{" << b.min_ << " to " << b.max_;
     return out << "}";
 }
 

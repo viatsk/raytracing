@@ -39,12 +39,12 @@ class world {
       }
     }
 
-    if (debug_render_boxes_) {
-      std::optional<hit_record> bounding_box_record = bounding_box.hit_with_colour_info(r);
-      if (bounding_box_record.has_value()) {
-        hit = bounding_box_record;
-      }
-    }
+    // if (debug_render_boxes_) {
+    //   std::optional<hit_record> bounding_box_record = bounding_box.hit_with_colour_info(r);
+    //   if (bounding_box_record.has_value()) {
+    //     hit = bounding_box_record;
+    //   }
+    // }
     
     return hit;
   }

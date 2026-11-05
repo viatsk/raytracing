@@ -107,10 +107,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 enable_testing()
-add_executable(unit_tests 
+
+set(TEST_SOURCES
   tests/bound3_tests.cc
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/stacy/bounds3.h"
+  tests/bvh_tests.cc
 )
+
+add_executable(unit_tests 
+  ${TEST_SOURCES}
+)
+
 target_link_libraries(unit_tests 
   PRIVATE 
     GTest::gtest_main

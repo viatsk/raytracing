@@ -25,7 +25,7 @@ constexpr int inferno_data_step = inferno_data.size() / 6;
 
 // TODO: Don't go from 0 to 256 and then back.
 // Assumes degree is between 0 and 1.
-colour inferno(double degree) {
+inline colour inferno(double degree) {
   const auto index = std::min(inferno_data_step - 1, std::max(0, int(std::floor(degree * inferno_data_step))));
   // String stored as RRGGBB
   // TODO: Use std::strtoul to deal with raw char* arrays
@@ -36,7 +36,7 @@ colour inferno(double degree) {
   return colour(r, g, b);
 }
 
-void write_colour(std::ostream& out, const colour& pixel_colour) {
+inline void write_colour(std::ostream& out, const colour& pixel_colour) {
   auto r = pixel_colour.x();
   auto g = pixel_colour.y();
   auto b = pixel_colour.z();
