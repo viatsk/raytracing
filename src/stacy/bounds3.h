@@ -80,7 +80,7 @@ class bounds3 {
     const point3 p = r.at(intersection_t.value());
     int boundary_count = 0;
 
-    double delta = 0.05;
+    double delta = 0.02;
     for (int axis : {0, 1, 2}) {
         if (std::abs(p[axis] - min_[axis]) <= delta ||
             std::abs(p[axis] - max_[axis]) <= delta) {

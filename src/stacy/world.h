@@ -3,11 +3,13 @@
 
 // Eventually sphere should be replaced with
 // triangles
+#include "bvh.h"
 #include "sphere.h"
 #include "hit_record.h"
 
 #include <cmath>
 #include <vector>
+#include <memory>
 
 class world {
  public:
@@ -16,12 +18,15 @@ class world {
   // Add and remove objects
   void add(sphere object) {
     objects_.push_back(object);
-    bounding_box = box_union(bounding_box, object.bounding_box());
-    // std::cerr << "BOX: " << bounding_box << "\n";
   }
   
   void clear() { objects_.clear(); }
+  // TODO: Clean up / make interdependant
   void render_aabbs(bool render) { debug_render_boxes_ = render; }
+  void make_bvh() {
+    bound_volume_hierarchy_ = std::make_unique<bvh>(objects_);
+    bound_volume_hierarchy_->validate();
+  }
 
   // Rendering the world requires hitting anything
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
@@ -39,19 +44,20 @@ class world {
       }
     }
 
-    // if (debug_render_boxes_) {
-    //   std::optional<hit_record> bounding_box_record = bounding_box.hit_with_colour_info(r);
-    //   if (bounding_box_record.has_value()) {
-    //     hit = bounding_box_record;
-    //   }
-    // }
+    // TODO: Implement a second renderpass to visualize boxes
+    if (debug_render_boxes_) {
+      std::optional<hit_record> bounding_box_record = bound_volume_hierarchy_->hit_with_colour_info(r, 0);
+      if (bounding_box_record.has_value()) {
+        hit = bounding_box_record;
+      }
+    }
     
     return hit;
   }
 
  private:
   std::vector<sphere> objects_;
-  bounds3 bounding_box;
+  std::unique_ptr<bvh> bound_volume_hierarchy_;
   bool debug_render_boxes_ = false; 
 };
 

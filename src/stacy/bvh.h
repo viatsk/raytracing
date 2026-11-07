@@ -8,6 +8,7 @@
 #include <cassert>
 
 constexpr int kNumBuckets = 4;
+const std::vector<colour> debug_palette = {red, green, blue};
 
 // Return union of all bounding boxes in list
 static bounds3 bbox_list(const std::vector<sphere>& list) {
@@ -118,8 +119,30 @@ class bvh {
   }
 
   // TODO: Implement HIT
-  bool hit(const ray& r) {
-    return false;
+  std::optional<hit_record> hit_with_colour_info(const ray& r, int depth) {
+    std::optional<hit_record> rec;
+    if (object_.has_value()) {
+      // Leaf Node
+      rec = bbox_.hit_with_colour_info(r);
+      if (rec.has_value()){
+        rec.value().attenuation = debug_palette[depth % debug_palette.size()];
+      }
+      return rec;
+    }
+    rec = bbox_.hit_with_colour_info(r);
+    if (rec.has_value()) {
+      rec.value().attenuation = debug_palette[depth % debug_palette.size()];
+      return rec;
+    }
+    rec = left_->hit_with_colour_info(r, depth + 1);
+    if (rec.has_value()) {
+      return rec;
+    }
+    rec = right_->hit_with_colour_info(r, depth + 1);
+    if (rec.has_value()) {
+      return rec;
+    }
+    return {};
   }
 
  private:
