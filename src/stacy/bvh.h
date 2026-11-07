@@ -21,13 +21,13 @@ class bvh {
  public:
   bvh(std::vector<sphere> list) : bvh(list, 0, list.size(), bbox_list(list)) {} 
   bvh(std::vector<sphere> list, size_t start, size_t end, const bounds3 bbox) {
-    std::cerr << "bvh recursive: ";
+    bbox_ = bbox;
     // Step 0: Return early
     int num_primatives = end - start;
     if (num_primatives == 1) {
       // TODO: Enforce being the same as list[start] and list[end] box?
-      bbox_ = bbox;
-      std::cerr << "Leaf! \n";
+      object_ = list[start];
+      return;
     }
     
     // Step 2: Chose the axis associated w/ the largest extent when projecting
@@ -56,8 +56,6 @@ class bvh {
       bucket_counts[bucket_index]++;
       std::cerr << " in box " << buckets[bucket_index] << " w/ sa " << prim_box.surface_area() << "\n";
     }
-
-
   
     // Step 4: Estimate the cost of splitting at each bucket boundary
     bounds3 prefix_bounds[kNumBuckets];
@@ -101,16 +99,18 @@ class bvh {
       }
     }
 
-    std::cerr << "Min split cost: " << buckets[min_cost_split];
-    // auto mid = std::partition(
-    // list.begin() + start,
-    // list.begin() + end,
-    // [&](const Primitive& prim) {
-    //     return prim.bounding_box().centroid()[split_dim] < split_pos;
-    // }
-    // );
+    std::cerr << "Min split cost: " << buckets[min_cost_split]<< "\n";
 
-    std::cerr << "\n";
+    // Step 6: Recurse! 
+    sphere* foo = std::partition(&list[0], &list[end], [=] (const sphere s) {
+      int b = (kNumBuckets-1)* (centroid_bounds.offset(s.bounding_box().centroid())[split_dim]);
+      return b <= min_cost_split;
+    });
+    int mid = foo - &list[0];
+    // std::cerr << "start is " << start << "int middle is " << mid;
+    left_ = make_unique<bvh>(list, start, mid, prefix_bounds[min_cost_split]);
+    right_ = make_unique<bvh>(list, mid, end, suffix_bounds[min_cost_split+1]);
+    return;
   }
 
   bounds3 left_box() {
@@ -133,11 +133,33 @@ class bvh {
   bounds3 bounding_box() {return bbox_; }
 
  private:
+   static void print(std::ostream& out, const bvh& bvh_node, int depth) {
+    std::string indent(depth * 2, ' ');
+    if (bvh_node.object_.has_value()) {
+      out << indent << "Leaf:" << bvh_node.bbox_ << "\n"; 
+    } else {
+      if (bvh_node.left_) {
+        out << indent << "  Left:\n";
+        print(out, *bvh_node.left_, depth + 2);
+      }
+      if (bvh_node.right_) {
+        out << indent << "  Right:\n";
+        print(out, *bvh_node.right_, depth + 2);
+      }
+    }
+  }
+
+  friend std::ostream& operator<<(std::ostream& out, const bvh& bvh_node);
   std::unique_ptr<bvh> left_;
   std::unique_ptr<bvh> right_;
-  // TODO:  storing a variable-sized array of primitive indices at each leaf node.
+  std::optional<sphere> object_;
   bounds3 bbox_;
+  // Store split axis?
 };
 
+inline std::ostream& operator<<(std::ostream& out, const bvh& bvh_node) {
+  bvh::print(out, bvh_node,  0);
+  return out;
+}
 
 #endif
