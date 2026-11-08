@@ -34,19 +34,30 @@ class world {
     uint num_hit_tests = 0;
     auto closest = closest_so_far;
 
-    for (const sphere& object : objects_) {
-      std::optional<hit_record> tmp_rec = object.hit(r, closest);
+    if (bound_volume_hierarchy_) {
+      std::optional<hit_record> tmp_rec = bound_volume_hierarchy_->hit(r, closest);
       if (tmp_rec.has_value()) {
         num_hit_tests++;
         closest = tmp_rec.value().t;
         tmp_rec.value().num_hit_tests = num_hit_tests;
         hit = tmp_rec;
       }
+    } else {
+      for (const sphere& object : objects_) {
+        std::optional<hit_record> tmp_rec = object.hit(r, closest);
+        if (tmp_rec.has_value()) {
+          num_hit_tests++;
+          closest = tmp_rec.value().t;
+          tmp_rec.value().num_hit_tests = num_hit_tests;
+          hit = tmp_rec;
+        }
+      }
     }
 
-    // TODO: Implement a second renderpass to visualize boxes
+    // TODO: Implement a second renderpass to visualize boxes,
+    // currently things look Bad.
     if (debug_render_boxes_) {
-      std::optional<hit_record> bounding_box_record = bound_volume_hierarchy_->hit_with_colour_info(r, 0);
+      std::optional<hit_record> bounding_box_record = bound_volume_hierarchy_->hit_with_colour_info(r, closest, 0);
       if (bounding_box_record.has_value()) {
         hit = bounding_box_record;
       }

@@ -69,11 +69,19 @@ class bounds3 {
   // Filtering on the hit test function that allows the AABB be drawn.
   // TODO: Make this into a ray–edge distance test instead of filtering
   // intersections.
-  std::optional<hit_record> hit_with_colour_info(const ray& r) const {
+  std::optional<hit_record> hit_with_colour_info(const ray& r, double closest_so_far) const {
     auto intersection_t = intersects(r);
     if (!intersection_t.has_value())
       return {};
-    
+    // If the intersection point is behind something currently drawn,
+    // don't draw over it.
+    if (intersection_t.value() >= closest_so_far) {
+      return {};
+    }
+    // If the intersection point is very close to the camera, don't draw that either.
+    if (intersection_t.value() <= 0.1) {
+      return {};
+    }
     // Use the entry point, if the ray starts inside the AABB
     // then we'd need to check the exit distance (smallest_tmax)
     // TODO^?
