@@ -15,12 +15,11 @@ class world {
  public:
   world() {}
 
-  // Add and remove objects
   void add(sphere object) {
     objects_.push_back(object);
-  }
-  
+  }  
   void clear() { objects_.clear(); }
+
   // TODO: Clean up / make interdependant
   void render_aabbs(bool render) { debug_render_boxes_ = render; }
   void make_bvh() {

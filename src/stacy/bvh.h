@@ -121,24 +121,25 @@ class bvh {
     assert(box_union(left_->bounding_box(), right_->bounding_box()) == bbox_);
   }
 
+  // TODO: Revisit the way we do num_hit_tests.
   std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
-    // std::cerr << "hit\n";
-    std::optional<hit_record> rec;
-    // Leaf 
     if (object_.has_value()) {
-      if (bbox_.hit(r)) {
-        // test intersection with obj!
-        return object_.value().hit(r, closest_so_far);
+      // Leaf node
+      return object_.value().hit(r, closest_so_far);
+    }
+    if (bbox_.hit(r)) {
+     // Internal Node.
+      std::optional<hit_record> left_rec = left_->hit(r, closest_so_far);
+      if (left_rec.has_value()) {
+        // Return the closest of the left and right records
+        double closest_left = left_rec.value().t;
+        std::optional<hit_record> right_rec = right_->hit(r, closest_left);
+        return (right_rec.has_value() ? right_rec : left_rec);
       }
-      return {};
+      // Otherwise, return whatever the right record is.
+      return right_->hit(r, closest_so_far);
     }
-    // Internal Node.
-    rec = right_->hit(r, closest_so_far);
-    if (rec.has_value()) {
-      return rec;
-    }
-    rec = left_->hit(r, closest_so_far);
-    return rec;
+    return {};
   }
 
 
@@ -162,11 +163,7 @@ class bvh {
     if (rec.has_value()) {
       return rec;
     }
-    rec = right_->hit_with_colour_info(r, closest_so_far, depth + 1);
-    if (rec.has_value()) {
-      return rec;
-    }
-    return {};
+    return right_->hit_with_colour_info(r, closest_so_far, depth + 1);
   }
 
  private:

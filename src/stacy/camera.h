@@ -180,8 +180,6 @@ class camera {
       }
     }
 
-    // std::optional<hit_record> record = world.draw_boxes(r, std::numeric_limits<double>::infinity());
-
     // Background gradient
     vec3 unit_direction = unit_vector(r.direction());
     double a = 0.5 * (unit_direction.y() + 1.0);
