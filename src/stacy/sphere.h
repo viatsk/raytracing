@@ -86,5 +86,10 @@ class sphere {
   material mat_; // Default material is grey lambertian
 };
 
+inline std::ostream& operator<<(std::ostream& out, const sphere& s) {
+    return out << "sphere{" << s.bounding_box() << "}";
+}
+
+
 #endif
 
