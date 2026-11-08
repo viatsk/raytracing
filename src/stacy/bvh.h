@@ -25,13 +25,13 @@ class bvh {
   bvh(std::vector<sphere> list, const bounds3 bbox) {
     bbox_ = bbox;
     // Step 0: Return early in the trivial case.
-    // TODO: Each leaf should store K primitives
+    // TODO: Each leaf could store K primitives
     if (list.size() == 1) {
       object_ = list[0];
       return;
     }
     
-    // Step 2: Chose the axis associated w/ the largest extent when projecting
+    // Step 1: Chose the axis associated w/ the largest extent when projecting
     // the bounding box centroid for the curent set of primitives.
     // We choose the axis with the largest range of bbox centroids.
     bounds3 centroid_bounds;
@@ -39,6 +39,15 @@ class bvh {
       centroid_bounds = box_union(centroid_bounds, list[i].bounding_box().centroid());
     }
     int split_dim = centroid_bounds.max_extent();
+
+    // Step 2: If primatives are concentric, the union of the centroid bounds form an empty bbox
+    // at the centroid. Split in half in this trivial case.
+    if (centroid_bounds.max_[split_dim] == centroid_bounds.min_[split_dim]) {
+      std::vector<sphere>::iterator midpoint = list.begin() + (list.size() / 2);
+      left_ = make_unique<bvh>(std::vector<sphere>(list.begin(), midpoint));
+      right_ = make_unique<bvh>(std::vector<sphere>(midpoint, list.end()));
+      return;
+    }
 
     // Step 3: Arrange everything into buckets
     bounds3 buckets[kNumBuckets];
@@ -52,7 +61,6 @@ class bvh {
       // bucket_index = std::min(bucket_index, kNumBuckets - 1);
       buckets[bucket_index] = box_union(buckets[bucket_index], prim_box);
       bucket_counts[bucket_index]++;
-      // std::cerr << " in box " << buckets[bucket_index] << " w/ sa " << prim_box.surface_area() << "\n";
     }
   
     // Step 4: Estimate the cost of splitting at each bucket boundary
@@ -63,8 +71,6 @@ class bvh {
     for (int i = 1; i < kNumBuckets; ++i) {
       prefix_bounds[i] = box_union(prefix_bounds[i-1], buckets[i]);
       left_counts[i] = left_counts[i-1] + bucket_counts[i];
-      // std::cerr << "\nPrefix bbox[" << i << "]: " << prefix_bounds[i] << 
-      //   " surface area is " << left_counts[i];
     }
 
     bounds3 suffix_bounds[kNumBuckets];
@@ -74,16 +80,12 @@ class bvh {
     for (int i = kNumBuckets - 2; i >= 0; --i) {
       suffix_bounds[i] = box_union(suffix_bounds[i+1], buckets[i]);
       right_counts[i] = right_counts[i+1] + bucket_counts[i];
-      // std::cerr << "\nSuffix bbox[" << i << "]: " << suffix_bounds[i] <<
-      //      " surface area is " << right_counts[i];
     }
 
     // Step 5: Choose the best stuff
     float min_cost = INFINITY;
     int min_cost_split = 0;
     for (int i = 0; i < kNumBuckets-1; ++i) {
-      // Fail immediately if split planes are not flush.
-      // assert((prefix_bounds[i].max_[split_dim] == suffix_bounds[i+1].min_[split_dim]));
       float cost = 0.125 + ((left_counts[i] * prefix_bounds[i].surface_area() + right_counts[i+1] * suffix_bounds[i+1].surface_area()) / bbox.surface_area());
       if (cost < min_cost) {
         min_cost = cost;
@@ -92,10 +94,11 @@ class bvh {
     }
 
     // Step 6: Build valid sub-trees.
-    std::vector<sphere>::iterator midpoint = std::partition(list.begin(), list.end(), [=] (const sphere s) {
+    std::vector<sphere>::iterator midpoint = std::partition(list.begin(), list.end(), [&] (const sphere& s) {
       int b = (kNumBuckets-1)* (centroid_bounds.offset(s.bounding_box().centroid())[split_dim]);
       return b <= min_cost_split;
     });
+    assert(midpoint != list.end());
     left_ = make_unique<bvh>(std::vector<sphere>(list.begin(), midpoint), prefix_bounds[min_cost_split]);
     right_ = make_unique<bvh>(std::vector<sphere>(midpoint, list.end()), suffix_bounds[min_cost_split+1]);
     return;
@@ -117,6 +120,27 @@ class bvh {
     assert(right_ != nullptr);
     assert(box_union(left_->bounding_box(), right_->bounding_box()) == bbox_);
   }
+
+  std::optional<hit_record> hit(const ray& r, double closest_so_far) const {
+    // std::cerr << "hit\n";
+    std::optional<hit_record> rec;
+    // Leaf 
+    if (object_.has_value()) {
+      if (bbox_.hit(r)) {
+        // test intersection with obj!
+        return object_.value().hit(r, closest_so_far);
+      }
+      return {};
+    }
+    // Internal Node.
+    rec = right_->hit(r, closest_so_far);
+    if (rec.has_value()) {
+      return rec;
+    }
+    rec = left_->hit(r, closest_so_far);
+    return rec;
+  }
+
 
   // TODO: Implement HIT
   std::optional<hit_record> hit_with_colour_info(const ray& r, int depth) {
