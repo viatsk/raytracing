@@ -70,13 +70,12 @@ class sphere {
         }, mat_);
     hit.attenuation = atten;
     hit.scattered = scatter;
+    hit.num_hit_tests = 0;
     return hit;
   }
 
   bounds3 bounding_box() const {
     vec3 radius_vec = vec3(radius_, radius_, radius_);
-    // std::cerr << "Radius_vec:" << radius_vec << "\n";
-    // std::cerr << "centre_:" << centre_ << "\n";
     return bounds3(centre_ - radius_vec, centre_ + radius_vec);
   }
 
