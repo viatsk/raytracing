@@ -30,7 +30,7 @@ int main() {
           // remaining 10% will be glass
           double refraction_glass_sphere = random_double(1.0, 2.0);
           world.add(sphere(centre, 0.2, dielectric(refraction_glass_sphere)));
-          world.add(sphere(centre, 0.2, dielectric(/*air*/1.00 / refraction_glass_sphere)));
+          world.add(sphere(centre, 0.15, dielectric(/*air*/1.00 / refraction_glass_sphere)));
         }
       }
     }
@@ -39,11 +39,10 @@ int main() {
   // Add a really big metal sphere in the middle.
   world.add(sphere(point3(4, 1, 0), 1.0, metallic(colour(0.7, 0.6, 0.5), 0.0)));
 
-
+  world.make_bvh();
   camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 3840);
-  cam.set_max_depth(5);
-  cam.set_samples_per_pixel(1);
-  cam.set_recolour_using_debug_info(true);
+  cam.set_max_depth(15);
+  cam.set_samples_per_pixel(3);
 
   cam.render(world);
 
