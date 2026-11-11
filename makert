@@ -2,6 +2,6 @@
 
 cmake -B build
 cmake --build build --target $1 -j $(nproc)
-./build/$1 > out/$1.ppm
+time ./build/$1 > out/$1.ppm
 display out/$1.ppm
 
