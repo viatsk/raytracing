@@ -128,16 +128,24 @@ class bvh {
       return object_.value().hit(r, closest_so_far);
     }
     if (bbox_.hit(r)) {
-     // Internal Node.
+      // Internal Node.
       std::optional<hit_record> left_rec = left_->hit(r, closest_so_far);
       if (left_rec.has_value()) {
+        left_rec.value().num_hit_tests+=1;
         // Return the closest of the left and right records
         double closest_left = left_rec.value().t;
         std::optional<hit_record> right_rec = right_->hit(r, closest_left);
+        if (right_rec.has_value()) {
+          right_rec.value().num_hit_tests +=2;
+        }
         return (right_rec.has_value() ? right_rec : left_rec);
       }
       // Otherwise, return whatever the right record is.
-      return right_->hit(r, closest_so_far);
+      std::optional<hit_record> right_rec = right_->hit(r, closest_so_far);
+      if (right_rec.has_value()) {
+        right_rec.value().num_hit_tests +=1;
+      }
+      return right_rec;
     }
     return {};
   }

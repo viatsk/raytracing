@@ -36,16 +36,14 @@ class world {
     if (bound_volume_hierarchy_) {
       std::optional<hit_record> tmp_rec = bound_volume_hierarchy_->hit(r, closest);
       if (tmp_rec.has_value()) {
-        num_hit_tests++;
         closest = tmp_rec.value().t;
-        tmp_rec.value().num_hit_tests = num_hit_tests;
         hit = tmp_rec;
       }
     } else {
       for (const sphere& object : objects_) {
+        num_hit_tests++;
         std::optional<hit_record> tmp_rec = object.hit(r, closest);
         if (tmp_rec.has_value()) {
-          num_hit_tests++;
           closest = tmp_rec.value().t;
           tmp_rec.value().num_hit_tests = num_hit_tests;
           hit = tmp_rec;
