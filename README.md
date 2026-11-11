@@ -1,10 +1,15 @@
 Ray Tracing (ongoing)
 ====================================================================================================
 
-This is my raytracer implementation based on the "Ray Tracing In One Weekend" series.
-Here is the current state of my spheres:
+This is my raytracer implementation based on the "Ray Tracing In One Weekend" series and other references I found online. 
 
-### Metallic:
+### Bound Volume Hierarchies w/ Surface Area Heuristic
+
+![foo][bvhexample]
+
+[bvhexample]: out/rt11DRAWNBVHBETTER.jpg
+
+### Metallic Spheres:
 
 | ![foo][out8_all]  | ![foo][outfinal]  |
 |:---------------------------:|:---------------------------:|
@@ -16,10 +21,10 @@ Here is the current state of my spheres:
 |Dielectric sphere on metal|Glass (two-layer dielectric), diffuse, and fuzzy metal|
 
 
-### New Debug Mode (#hit tests):
-| ![foo][debugexample] | <div style="width:400px">![foo][debugexample2]</div>  |
+### Debug Mode (#hit tests):
+| ![foo][debugexampleBVH] |![foo][debugexampleLINEAR]  |
 |:---------------------------:|:---------------------------:|
-| Three different materials |  Comples Scene|
+| BVH (lightest pix: 32 hits) |  Linear: (lightest pix: 39 hits)|
 
 ### And here are some arbitrary camera angles I was proud of (as of rt6): 
 
@@ -34,8 +39,8 @@ I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook
   * [x] Add as many threads as there are cores on machine
     * [ ] Benchmark using `std::atomic<int>` (dynamic allocation) vs assigning batching pixels by multiple of thread id (static allocation).
   * [x] Introduce a debug mode that outputs the cost of each tile (time spent rendering that tile mapped by colour)
-  * [ ] Profile
-  * [ ] **WIP**: Move away from virtual dispatch
+  * [x] Bound Volume Hierarchy with Surface Area Heuristics
+  * [x] Move away from virtual dispatch
       - Cool part: Implement interface concept using C++20 `contract`, `std::varient` and `std::visit` rather than inheriting from an abstract class
       - https://godbolt.org/z/h7Tn9axx7 vs using C++20 https://godbolt.org/z/E3vb5v1n8
   * [ ] Understand stratified sampling (?)
@@ -67,6 +72,8 @@ The files in `src/stacy` act as "checkpoints" along the journey to render 1001 s
 - [rt8] renders metal spheres
 - [rt9] adds dielectric spheres. when the metal fuzz factor is 0, they act like spherical mirrors
 - [rt10] renders all three materials in one scene
+- [rt11] does the same with a slighly more abnormal sphere distribution
+- [rtfinal] generates 900 little spheres and 2 big ones
 
 The spheres will be improving.
 
@@ -98,8 +105,10 @@ The spheres will be improving.
 [rt8]:             src/stacy/ray-tracing8.cc
 [rt9]:             src/stacy/ray-tracing9.cc
 [rt10]:            src/stacy/ray-tracing10.cc
+[rt11]:            src/stacy/ray-tracing11.cc
+[rtfinal]:         src/stacy/ray-tracingfinal.cc
 [textbook]:        https://raytracing.github.io/books/RayTracingInOneWeekend.html
 [textbook2]:       https://raytracing.github.io/books/RayTracingTheNextWeek.html
-[debugexample]:    out/rt11NUMHITS.jpg
-[debugexample2]:   out/rtfinalDebugGhosts2.jpg
+[debugexampleBVH]:    out/rt11-dbgcolour-bvh.jpg
+[debugexamplelinear]: out/rt11-dbgcolour-linear.jpg
 
