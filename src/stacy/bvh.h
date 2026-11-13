@@ -150,28 +150,27 @@ class bvh {
     return {};
   }
 
-
-  // TODO: Implement HIT
-  std::optional<hit_record> hit_with_colour_info(const ray& r, double closest_so_far, int depth = 0) {
+  // Draws BVH in order of debug_palette
+  std::optional<hit_record> hit_for_debug(const ray& r, double closest_so_far, int depth = 0) {
     std::optional<hit_record> rec;
     if (object_.has_value()) {
       // Leaf Node
-      rec = bbox_.hit_with_colour_info(r, closest_so_far);
+      rec = bbox_.hit_for_debug(r, closest_so_far);
       if (rec.has_value()) {
         rec.value().attenuation = debug_palette[depth % debug_palette.size()];
       }
       return rec;
     }
-    rec = bbox_.hit_with_colour_info(r, closest_so_far);
+    rec = bbox_.hit_for_debug(r, closest_so_far);
     if (rec.has_value()) {
       rec.value().attenuation = debug_palette[depth % debug_palette.size()];
       return rec;
     }
-    rec = left_->hit_with_colour_info(r, closest_so_far, depth + 1);
+    rec = left_->hit_for_debug(r, closest_so_far, depth + 1);
     if (rec.has_value()) {
       return rec;
     }
-    return right_->hit_with_colour_info(r, closest_so_far, depth + 1);
+    return right_->hit_for_debug(r, closest_so_far, depth + 1);
   }
 
  private:

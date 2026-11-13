@@ -69,7 +69,7 @@ class bounds3 {
   // Filtering on the hit test function that allows the AABB be drawn.
   // TODO: Make this into a ray–edge distance test instead of filtering
   // intersections.
-  std::optional<hit_record> hit_with_colour_info(const ray& r, double closest_so_far) const {
+  std::optional<hit_record> hit_for_debug(const ray& r, double closest_so_far) const {
     auto intersection_t = intersects(r);
     if (!intersection_t.has_value())
       return {};
@@ -100,15 +100,14 @@ class bounds3 {
     
     hit_record hit;
     hit.p = p;
-    // normal? 
+    // TODO: normal? 
     hit.t = intersection_t.value();
-    hit.attenuation = red;
-    hit.scattered = ray(p, r.direction());
+    hit.attenuation = red; // default colour
+    hit.scattered = ray(p, r.direction()); // currently unused
     hit.num_hit_tests = 1;
     return hit;
   }
 
-  // Normal hit testing function! 
   bool hit(const ray& r) const {
     return intersects(r).has_value();
   }

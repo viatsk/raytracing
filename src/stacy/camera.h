@@ -13,6 +13,7 @@ enum ColourMode {
   Scene,
   NormalsOnly,
   NumBounces,
+  NumHitTestsInferno,
 };
 
 struct ray_results {
@@ -101,7 +102,8 @@ class camera {
     std::cerr << "Total Hits: " << total_hits << " (" << total_hits / (index_counter.load()) << "/pixel avg) \n";
     std::cerr << "Most expensive hit: " << *std::max_element(num_hits_.begin(), num_hits_.end()) << "\n";
 
-    if (recolour_using_debug_info_) {
+    // Inferno Mode re-colours all pixels using the value in the num_hits_ vector.
+    if (mode_ == NumHitTestsInferno) {
       auto max_it = std::max_element(num_hits_.begin(), num_hits_.end());
       const double max_val = *max_it;
       std::transform(num_hits_.begin(), num_hits_.end(), results_.begin(), [max_val](double result) {
@@ -131,10 +133,6 @@ class camera {
     mode_ = mode;
   }
 
-  void set_recolour_using_debug_info(bool recolour_using_debug_info){
-    recolour_using_debug_info_ = recolour_using_debug_info;
-  }
-
   // TODO: Implement camera pan
   point3 scene_centre   = point3(0,0,-1);  // Point camera is looking at.
   vec3   vup      = vec3(0,1,0);     // Camera-relative "up" direction.
@@ -157,7 +155,6 @@ class camera {
     return (1.0-a)*start_value + a*end_value;
   }
 
-  // TODO: Clean up this function, it's getting messy.
   ray_results ray_colour(const ray& r, int max_depth, const world& world) {
     if (!max_depth) {
       return ray_results{white, 0};
@@ -169,26 +166,26 @@ class camera {
       auto bounce = ray_colour(rec_value.scattered, max_depth-1, world);
       switch (mode_) {
         case ColourMode::Scene:
+        case ColourMode::NumHitTestsInferno:
           return ray_results{rec_value.attenuation * bounce.pixel_colour, rec_value.num_hit_tests + bounce.num_hittests};
-          break;
-        case ColourMode::NormalsOnly: // No bounces
-          return ray_results{0.5 * (record.value().normal + white), rec_value.num_hit_tests};
-          break;
         case ColourMode::NumBounces:
-          return ray_results{bounce.pixel_colour, rec_value.num_hit_tests + bounce.num_hittests};
-          break;
+          return ray_results{bounce.pixel_colour, /*num hittests unused*/0};
+        // No bounces
+        case ColourMode::NormalsOnly: 
+          return ray_results{0.5 * (record.value().normal + white), rec_value.num_hit_tests};
       }
+    }
+    
+    // TODO: How can I make this less messy?
+    if (mode_ == ColourMode::NumBounces) {
+      double percent_max_depth_reached = double(double(max_depth_ - max_depth)/double(max_depth_));
+      return ray_results{percent_max_depth_reached * white, 0};
     }
 
     // Background gradient
     vec3 unit_direction = unit_vector(r.direction());
-    double a = 0.5 * (unit_direction.y() + 1.0);
-
-    if (mode_ == ColourMode::NumBounces) {
-      double x = double(double(max_depth_ - max_depth)/double(max_depth_));
-      return ray_results{x * white, 0};
-    }
-    return ray_results{stacy_lerp(blue, white, a), 0};
+    double lerp_gradient = 0.5 * (unit_direction.y() + 1.0);
+    return ray_results{stacy_lerp(blue, white, lerp_gradient), 0};
   }
 
   // Camera setup
@@ -212,9 +209,6 @@ class camera {
   vec3 pixel_delta_u;
   vec3 pixel_delta_v;
   vec3 u, v, w;  // Camera frame basis vectors
-
-  // Feature flags TODO remove
-  bool recolour_using_debug_info_ = false;
 
   // Paralellization
   std::vector<colour> results_;

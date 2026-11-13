@@ -7,14 +7,14 @@
 
 using colour = vec3;
 
-// Standard colours
+// Unit basis vectors for colour space
 static colour red = colour(1.0, 0.0, 0.0);
 static colour green = colour(0.0, 1.0, 0.0);
 static colour blue = colour(0.0, 0.0, 1.0);
 static colour white = colour(1.0, 1.0, 1.0);
 static colour black = colour(0.0, 0.0, 0.0);
 
-// Based on artistic preference
+// Based on preference
 static colour light_blue = colour(0.5, 0.7, 1.0);
 static colour light_green = colour(0.565, 0.933, 0.565);
 static colour light_red = colour(0.85, 0.3, 0.3);

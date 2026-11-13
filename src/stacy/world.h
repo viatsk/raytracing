@@ -54,7 +54,7 @@ class world {
     // TODO: Implement a second renderpass to visualize boxes,
     // currently things look Bad.
     if (debug_render_boxes_) {
-      std::optional<hit_record> bounding_box_record = bound_volume_hierarchy_->hit_with_colour_info(r, closest, 0);
+      std::optional<hit_record> bounding_box_record = bound_volume_hierarchy_->hit_for_debug(r, closest, 0);
       if (bounding_box_record.has_value()) {
         hit = bounding_box_record;
       }

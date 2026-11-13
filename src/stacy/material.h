@@ -18,9 +18,9 @@ class lambertian {
  public:
   lambertian(const colour& albedo) : albedo_(albedo) {}
 
-  // TODO: ray_in not used?
-  // Implement cosine normal sampling, I think.
+  // TODO: Implement cosine normal sampling, I think.
   std::tuple<colour, ray> scatter(const ray& r_in, const hit_record& rec) const {
+      // r_in not used because nothing is ever reflected
       auto scatter_direction = rec.normal + random_unit_vector();
       // Catch degenerate scatter direction
       if (scatter_direction.near_zero())
