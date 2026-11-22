@@ -38,11 +38,13 @@ int main() {
 
   // Add a really big metal sphere in the middle.
   world.add(sphere(point3(4, 1, 0), 1.0, metallic(colour(0.7, 0.6, 0.5), 0.0)));
+  world.add(sphere(point3(0, 1, 0), 1.0, dielectric(1.5)));
+  world.add(sphere(point3(0, 1, 0), 0.9, dielectric(1.0/1.5)));
 
   world.make_bvh();
-  camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 3840);
+  camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 3840, 10);
   cam.set_max_depth(15);
-  cam.set_samples_per_pixel(3);
+  cam.set_samples_per_pixel(100);
 
   cam.render(world);
 

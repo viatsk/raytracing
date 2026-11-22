@@ -21,13 +21,15 @@ struct ray_results {
   uint num_hittests;
 };
 
+
+// TODO: Have separate DEBUG and FINAL IMAGE constructors
 class camera {
  public:
-  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width) {
+  camera(const point3& camera_centre, double vfov, double aspect_ratio = 16.0 / 9.0, int img_width = 1280, double focus_distance = -1) : camera_centre_(camera_centre), vfov_(vfov), aspect_ratio_(aspect_ratio), img_width_(img_width), focus_distance_(focus_distance) {
     img_height_ = int(img_width / aspect_ratio);
     total_num_pixels_ = (img_height_ * img_width_);
 
-    auto focal_length = (camera_centre_ - scene_centre).length();
+    auto focal_length = (focus_distance > 0? focus_distance : (camera_centre_ - scene_centre).length());
     auto theta = degrees_to_radians(vfov_);
     auto h = std::tan(theta/2);
     auto viewport_height = 2 * h * focal_length;
@@ -47,6 +49,11 @@ class camera {
 
     vec3 Q = camera_centre_ - (focal_length * w) - viewport_u/2 - viewport_v/2;
     pixel00_loc = Q + (0.5 * (pixel_delta_u + pixel_delta_v));
+
+    // Calculate the camera defocus disk basis vectors.
+    auto defocus_radius = focal_length * std::tan(degrees_to_radians(defocus_angle / 2));
+    defocus_disk_u = u * defocus_radius;
+    defocus_disk_v = v * defocus_radius;
 
     // Anti-aliassing weighs the pixel colour by the number of sample rays per pixel.
     pixels_colour_scale_ = 1.0 / samples_per_pixel_;
@@ -147,8 +154,15 @@ class camera {
       offset = vec3(0,0,0);
     }
     vec3 pixel_sample = pixel00_loc + ((pixel_w + offset.x())* pixel_delta_u) + ((pixel_h + offset.y()) * pixel_delta_v);
-    vec3 ray_direction = pixel_sample - camera_centre_;
-    return ray(/* ray origin = */camera_centre_, ray_direction);
+    vec3 ray_origin = (focus_distance_ <= 0) ? camera_centre_ : defocus_disk_sample();
+    vec3 ray_direction = pixel_sample - ray_origin;
+    return ray(ray_origin, ray_direction);
+  }
+
+  point3 defocus_disk_sample() const {
+    // Returns a random point in the camera defocus disk.
+    auto p = random_in_unit_disk();
+    return camera_centre_ + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
   }
 
   vec3 stacy_lerp(vec3 start_value, vec3 end_value, float a) {
@@ -209,6 +223,12 @@ class camera {
   vec3 pixel_delta_u;
   vec3 pixel_delta_v;
   vec3 u, v, w;  // Camera frame basis vectors
+
+  // Defocus Blur - focus distance being set implies it's use
+  double focus_distance_ = 10; // Distance from the camera to the plane of perfect focus 
+  double defocus_angle = 0.6;     // Variation angle of rays through each pixel
+  vec3   defocus_disk_u;       // Defocus disk horizontal radius
+  vec3   defocus_disk_v;       // Defocus disk vertical radius
 
   // Paralellization
   std::vector<colour> results_;
