@@ -12,7 +12,6 @@
 enum ColourMode {
   Scene,
   NormalsOnly,
-  NumBounces,
   NumHitTestsInferno,
 };
 
@@ -182,18 +181,10 @@ class camera {
         case ColourMode::Scene:
         case ColourMode::NumHitTestsInferno:
           return ray_results{rec_value.attenuation * bounce.pixel_colour, rec_value.num_hit_tests + bounce.num_hittests};
-        case ColourMode::NumBounces:
-          return ray_results{bounce.pixel_colour, /*num hittests unused*/0};
         // No bounces
         case ColourMode::NormalsOnly: 
           return ray_results{0.5 * (record.value().normal + white), rec_value.num_hit_tests};
       }
-    }
-    
-    // TODO: How can I make this less messy?
-    if (mode_ == ColourMode::NumBounces) {
-      double percent_max_depth_reached = double(double(max_depth_ - max_depth)/double(max_depth_));
-      return ray_results{percent_max_depth_reached * white, 0};
     }
 
     // Background gradient

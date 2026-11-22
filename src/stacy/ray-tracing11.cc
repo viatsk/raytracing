@@ -23,7 +23,6 @@ int main() {
   camera cam(/*camera_centre_=*/point3(0, 0, -3), /*vfov_=*/90, 16.0 / 9.0, 800 /*3840*/);
   cam.set_max_depth(7);
   cam.set_samples_per_pixel(1);
-  cam.set_colour_mode(ColourMode::NumBounces);
 
   cam.render(world);
 
