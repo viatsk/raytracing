@@ -1,4 +1,4 @@
-#include "stacy/bvh.h"
+#include "tracer/bvh.h"
 #include <gtest/gtest.h>
 
 #include<memory>

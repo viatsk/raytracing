@@ -1,4 +1,4 @@
-#include "stacy/bounds3.h"
+#include "tracer/bounds3.h"
 #include <gtest/gtest.h>
 
 
