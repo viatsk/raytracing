@@ -54,9 +54,10 @@ I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook
   * [x] Add different sphere materials
   * [x] Anti-aliasing
   * [ ] Understand cosine normal sampling
-  * [ ] Feature flag to disable reflectance in dielectric materials
+  * [x] ~~Feature flag to disable reflectance in dielectric materials~~
   * [ ] Cube?
-  * [ ] Defocus blur for more camera-like rendering
+  * [ ] TRIANGLE?
+  * [x] Defocus blur for more camera-like rendering
   * [x] ~~Parallel Rust implementation?~~
 
 ### Files
