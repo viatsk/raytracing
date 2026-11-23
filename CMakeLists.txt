@@ -19,24 +19,24 @@ find_package(Threads REQUIRED)
 
 set ( SOURCE_RT2
   src/examples/ray-tracing2.cc
-  src/stacy/colour.h
-  src/stacy/vec3.h
+  src/tracer/colour.h
+  src/tracer/vec3.h
 )
 
 set ( UTILS
-  src/stacy/bounds3.h
-  src/stacy/common.h
-  src/stacy/colour.h
-  src/stacy/hit_record.h
-  src/stacy/ray.h
-  src/stacy/vec3.h
-  src/stacy/sphere.h
+  src/tracer/bounds3.h
+  src/tracer/common.h
+  src/tracer/colour.h
+  src/tracer/hit_record.h
+  src/tracer/ray.h
+  src/tracer/vec3.h
+  src/shapes/sphere.h
   # TODO make a MATERIALS set
-  src/stacy/material.h
+  src/tracer/material.h
 )
 
 set ( PROJ_MATRIX_CAMERA
-  src/stacy/camera.h
+  src/tracer/camera.h
 )
 
 
