@@ -1,8 +1,8 @@
-#include "colour.h"
-#include "sphere.h"
-#include "world.h"
-#include "ray.h"
-#include "vec3.h"
+#include "tracer/colour.h"
+#include "shapes/sphere.h"
+#include "tracer/world.h"
+#include "tracer/ray.h"
+#include "tracer/vec3.h"
 
 #include <iostream>
 

@@ -1,8 +1,8 @@
 #ifndef BVH_H
 #define BVH_H
 
-#include "bounds3.h"
-#include "sphere.h"
+#include "tracer/bounds3.h"
+#include "shapes/sphere.h"
 
 #include <memory>
 #include <cassert>

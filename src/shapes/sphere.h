@@ -1,11 +1,11 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "bounds3.h"
-#include "hit_record.h"
-#include "material.h"
-#include "ray.h"
-#include "vec3.h"
+#include "tracer/bounds3.h"
+#include "tracer/hit_record.h"
+#include "tracer/material.h"
+#include "tracer/ray.h"
+#include "tracer/vec3.h"
 
 #include <optional>
 #include <variant>

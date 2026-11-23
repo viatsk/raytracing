@@ -1,6 +1,6 @@
-#include "camera.h"
-#include "sphere.h"
-#include "world.h"
+#include "tracer/camera.h"
+#include "shapes/sphere.h"
+#include "tracer/world.h"
 
 #include <iostream>
 
@@ -42,9 +42,9 @@ int main() {
   world.add(sphere(point3(0, 1, 0), 0.9, dielectric(1.0/1.5)));
 
   world.make_bvh();
-  camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 3840, 10);
+  camera cam(/*camera_centre_=*/point3(15,2,4), /*vfov_=*/20, 16.0 / 9.0, 800, 10);
   cam.set_max_depth(15);
-  cam.set_samples_per_pixel(100);
+  cam.set_samples_per_pixel(30);
 
   cam.render(world);
 

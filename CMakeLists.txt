@@ -18,7 +18,7 @@ find_package(Threads REQUIRED)
 # Source
 
 set ( SOURCE_RT2
-  src/stacy/ray-tracing2.cc
+  src/examples/ray-tracing2.cc
   src/stacy/colour.h
   src/stacy/vec3.h
 )
@@ -72,28 +72,28 @@ endif()
 message("Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 # Executables
-add_executable(rt1             src/stacy/ray-tracing1.cc)
+add_executable(rt1             src/examples/ray-tracing1.cc)
 add_executable(rt2             ${SOURCE_RT2})
-add_executable(rt3             ${UTILS} src/stacy/ray-tracing3.cc)
-add_executable(rt4             ${UTILS} src/stacy/ray-tracing4.cc)
-add_executable(rt4dbg          ${UTILS} src/stacy/ray-tracing4-debug.cc)
+add_executable(rt3             ${UTILS} src/examples/ray-tracing3.cc)
+add_executable(rt4             ${UTILS} src/examples/ray-tracing4.cc)
+add_executable(rt4dbg          ${UTILS} src/examples/ray-tracing4-debug.cc)
 
 # Let's get serious
-add_executable(rt5             ${UTILS} src/stacy/ray-tracing5.cc)
-add_executable(rt5dbg          ${UTILS} src/stacy/ray-tracing5-debug.cc)
+add_executable(rt5             ${UTILS} src/examples/ray-tracing5.cc)
+add_executable(rt5dbg          ${UTILS} src/examples/ray-tracing5-debug.cc)
 
-add_executable(rt6             ${UTILS} ${PROJ_MATRIX_CAMERA} src/stacy/ray-tracing6.cc)
-add_executable(rt7             ${UTILS} ${PROJ_MATRIX_CAMERA} src/stacy/ray-tracing7.cc)
+add_executable(rt6             ${UTILS} ${PROJ_MATRIX_CAMERA} src/examples/ray-tracing6.cc)
+add_executable(rt7             ${UTILS} ${PROJ_MATRIX_CAMERA} src/examples/ray-tracing7.cc)
 
 # Materials implemented
-add_executable(rt8             ${UTILS} src/stacy/ray-tracing8.cc)
-add_executable(rt9             ${UTILS} src/stacy/ray-tracing9.cc)
-add_executable(rt10            ${UTILS} src/stacy/ray-tracing10.cc)
-add_executable(rt11            ${UTILS} src/stacy/ray-tracing11.cc)
+add_executable(rt8             ${UTILS} src/examples/ray-tracing8.cc)
+add_executable(rt9             ${UTILS} src/examples/ray-tracing9.cc)
+add_executable(rt10            ${UTILS} src/examples/ray-tracing10.cc)
+add_executable(rt11            ${UTILS} src/examples/ray-tracing11.cc)
 target_link_libraries(rt11 PRIVATE Threads::Threads)
 
 # Final
-add_executable(rtfinal            ${UTILS} src/stacy/ray-tracingfinal.cc)
+add_executable(rtfinal            ${UTILS} src/examples/ray-tracingfinal.cc)
 target_link_libraries(rtfinal PRIVATE Threads::Threads)
 
 

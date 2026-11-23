@@ -1,6 +1,6 @@
-#include "camera.h"
-#include "sphere.h"
-#include "world.h"
+#include "tracer/camera.h"
+#include "shapes/sphere.h"
+#include "tracer/world.h"
 
 #include <memory>
 #include <iostream>

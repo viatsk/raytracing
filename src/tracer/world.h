@@ -3,9 +3,9 @@
 
 // Eventually sphere should be replaced with
 // triangles
-#include "bvh.h"
-#include "sphere.h"
-#include "hit_record.h"
+#include "tracer/bvh.h"
+#include "shapes/sphere.h"
+#include "tracer/hit_record.h"
 
 #include <cmath>
 #include <vector>
