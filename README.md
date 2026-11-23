@@ -55,13 +55,13 @@ I ~~am~~ was reading and following this [textbook] [and it's follow-up][textbook
   * [x] Anti-aliasing
   * [ ] Understand cosine normal sampling
   * [x] ~~Feature flag to disable reflectance in dielectric materials~~
-  * [ ] Cube?
-  * [ ] TRIANGLE?
+  * [ ] Cubes and exotic knots
+  * [ ] TRIANGLES? And strap on a mesh importer
   * [x] Defocus blur for more camera-like rendering
   * [x] ~~Parallel Rust implementation?~~
 
 ### Files
-The files in `src/stacy` act as "checkpoints" along the journey to render 1001 spheres:
+The files in `src/examples` act as "checkpoints" along the journey to render 1001 spheres:
 
 - [rt1] is just a shaded plane
 - [rt2] uses vec3 but does the same
@@ -94,20 +94,20 @@ The spheres will be improving.
 [out9_glass_on_metal]: out/rt9_highfidelity_onesphere.png
 [out10]:          out/rt10_no_reflectance.jpg
 [outfinal]:          out/rtfinal.png
-[rt1]:             src/stacy/ray-tracing1.cc
-[rt2]:             src/stacy/ray-tracing2.cc
-[rt3]:             src/stacy/ray-tracing3.cc
-[rt4]:             src/stacy/ray-tracing4.cc
-[rt4dbg]:          src/stacy/ray-tracing4-debug.cc
-[rt5]:             src/stacy/ray-tracing5.cc
-[rt5dbg]:          src/stacy/ray-tracing5-debug.cc
-[rt6]:             src/stacy/ray-tracing6.cc
-[rt7]:             src/stacy/ray-tracing7.cc
-[rt8]:             src/stacy/ray-tracing8.cc
-[rt9]:             src/stacy/ray-tracing9.cc
-[rt10]:            src/stacy/ray-tracing10.cc
-[rt11]:            src/stacy/ray-tracing11.cc
-[rtfinal]:         src/stacy/ray-tracingfinal.cc
+[rt1]:             src/examples/ray-tracing1.cc
+[rt2]:             src/examples/ray-tracing2.cc
+[rt3]:             src/examples/ray-tracing3.cc
+[rt4]:             src/examples/ray-tracing4.cc
+[rt4dbg]:          src/examples/ray-tracing4-debug.cc
+[rt5]:             src/examples/ray-tracing5.cc
+[rt5dbg]:          src/examples/ray-tracing5-debug.cc
+[rt6]:             src/examples/ray-tracing6.cc
+[rt7]:             src/examples/ray-tracing7.cc
+[rt8]:             src/examples/ray-tracing8.cc
+[rt9]:             src/examples/ray-tracing9.cc
+[rt10]:            src/examples/ray-tracing10.cc
+[rt11]:            src/examples/ray-tracing11.cc
+[rtfinal]:         src/examples/ray-tracingfinal.cc
 [textbook]:        https://raytracing.github.io/books/RayTracingInOneWeekend.html
 [textbook2]:       https://raytracing.github.io/books/RayTracingTheNextWeek.html
 [debugexampleBVH]:    out/rt11-dbgcolour-bvh.jpg
