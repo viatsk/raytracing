@@ -2,7 +2,7 @@
 #define BVH_H
 
 #include "tracer/bounds3.h"
-#include "shapes/sphere.h"
+#include "shapes/hittable.h"
 
 #include <memory>
 #include <cassert>
@@ -10,10 +10,10 @@
 constexpr int kNumBuckets = 4;
 const std::vector<colour> debug_palette = {red, green, blue};
 
-// Return union of all bounding boxes in list
-static bounds3 bbox_list(const std::vector<sphere>& list) {
+// Return union of all bounding boxes in liste
+static bounds3 bbox_list(const std::vector<hittable>& list) {
   return std::accumulate(list.begin(), list.end(),
-        bounds3 {},[](bounds3 box, const sphere& s) {
+        bounds3 {},[](bounds3 box, const hittable& s) {
                   return box_union(box, s.bounding_box());
               });
 }
@@ -21,8 +21,8 @@ static bounds3 bbox_list(const std::vector<sphere>& list) {
 // Split Method: Surface Area Heuristic.
 class bvh {
  public:
-  bvh(std::vector<sphere> list) : bvh(list, bbox_list(list)) {} 
-  bvh(std::vector<sphere> list, const bounds3 bbox) {
+  bvh(std::vector<hittable> list) : bvh(list, bbox_list(list)) {} 
+  bvh(std::vector<hittable> list, const bounds3 bbox) {
     bbox_ = bbox;
     // Step 0: Return early in the trivial case.
     // TODO: Each leaf could store K primitives
@@ -43,9 +43,9 @@ class bvh {
     // Step 2: If primatives are concentric, the union of the centroid bounds form an empty bbox
     // at the centroid. Split in half in this trivial case.
     if (centroid_bounds.max_[split_dim] == centroid_bounds.min_[split_dim]) {
-      std::vector<sphere>::iterator midpoint = list.begin() + (list.size() / 2);
-      left_ = make_unique<bvh>(std::vector<sphere>(list.begin(), midpoint));
-      right_ = make_unique<bvh>(std::vector<sphere>(midpoint, list.end()));
+      std::vector<hittable>::iterator midpoint = list.begin() + (list.size() / 2);
+      left_ = make_unique<bvh>(std::vector<hittable>(list.begin(), midpoint));
+      right_ = make_unique<bvh>(std::vector<hittable>(midpoint, list.end()));
       return;
     }
 
@@ -94,13 +94,13 @@ class bvh {
     }
 
     // Step 6: Build valid sub-trees.
-    std::vector<sphere>::iterator midpoint = std::partition(list.begin(), list.end(), [&] (const sphere& s) {
+    std::vector<hittable>::iterator midpoint = std::partition(list.begin(), list.end(), [&] (const hittable& s) {
       int b = (kNumBuckets-1)* (centroid_bounds.offset(s.bounding_box().centroid())[split_dim]);
       return b <= min_cost_split;
     });
     assert(midpoint != list.end());
-    left_ = make_unique<bvh>(std::vector<sphere>(list.begin(), midpoint), prefix_bounds[min_cost_split]);
-    right_ = make_unique<bvh>(std::vector<sphere>(midpoint, list.end()), suffix_bounds[min_cost_split+1]);
+    left_ = make_unique<bvh>(std::vector<hittable>(list.begin(), midpoint), prefix_bounds[min_cost_split]);
+    right_ = make_unique<bvh>(std::vector<hittable>(midpoint, list.end()), suffix_bounds[min_cost_split+1]);
     return;
   }
 
@@ -193,7 +193,7 @@ class bvh {
   friend std::ostream& operator<<(std::ostream& out, const bvh& bvh_node);
   std::unique_ptr<bvh> left_;
   std::unique_ptr<bvh> right_;
-  std::optional<sphere> object_;
+  std::optional<hittable> object_;
   bounds3 bbox_;
   // Store split axis?
 };

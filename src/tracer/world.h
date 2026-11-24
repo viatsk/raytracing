@@ -4,7 +4,7 @@
 // Eventually sphere should be replaced with
 // triangles
 #include "tracer/bvh.h"
-#include "shapes/sphere.h"
+#include "shapes/hittable.h"
 #include "tracer/hit_record.h"
 
 #include <cmath>
@@ -15,7 +15,7 @@ class world {
  public:
   world() {}
 
-  void add(sphere object) {
+  void add(hittable object) {
     objects_.push_back(object);
   }  
   void clear() { objects_.clear(); }
@@ -40,7 +40,7 @@ class world {
         hit = tmp_rec;
       }
     } else {
-      for (const sphere& object : objects_) {
+      for (const hittable& object : objects_) {
         num_hit_tests++;
         std::optional<hit_record> tmp_rec = object.hit(r, closest);
         if (tmp_rec.has_value()) {
@@ -64,7 +64,7 @@ class world {
   }
 
  private:
-  std::vector<sphere> objects_;
+  std::vector<hittable> objects_;
   std::unique_ptr<bvh> bound_volume_hierarchy_;
   bool debug_render_boxes_ = false; 
 };
